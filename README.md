@@ -33,6 +33,6 @@ Comment fournir les consignes au logiciel ?
 # CdC format de fichier
 * .XML ou .Json
 * Description de la position de l'objet dans la scène
-* Prise en charge des sphères et des parallèlepipèdes
+* Prise en charge des sphères, des parallèlepipèdes, des plans
 * //Description de la texture de l'objet (reflectivité et diffusivité)
 * //Objet composé ?
