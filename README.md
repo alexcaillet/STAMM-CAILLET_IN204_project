@@ -30,4 +30,10 @@ Comment fournir les consignes au logiciel ?
 * Fonction de tracé de rayon 
 * Constructeurs/Destructeur des différents objets/rayons
 
-
+# CdC format de fichier
+* .XML ou .Json
+* Description de la position de l'objet dans la scène
+* Prise en charge des sphères et des parallèlepipèdes
+** Optionnel
+* Description de la texture de l'objet (relectivité et diffusivité)
+* Objet composé ?
