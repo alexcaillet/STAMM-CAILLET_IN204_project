@@ -34,6 +34,5 @@ Comment fournir les consignes au logiciel ?
 * .XML ou .Json
 * Description de la position de l'objet dans la scène
 * Prise en charge des sphères et des parallèlepipèdes
-** Optionnel
-* Description de la texture de l'objet (relectivité et diffusivité)
-* Objet composé ?
+* //Description de la texture de l'objet (relectivité et diffusivité)
+* //Objet composé ?
