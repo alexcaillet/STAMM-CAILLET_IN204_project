@@ -6,8 +6,8 @@
 class Vec{
 public:
     double x,y,z;
-    vec(double x1, double y1, double z1): x(x1), y(y1), z(z1){}
-    ~vec(){}
+    Vec(double x1, double y1, double z1): x(x1), y(y1), z(z1){}
+    ~Vec(){}
 
     void normalize(){
         double norme = this->norme();
