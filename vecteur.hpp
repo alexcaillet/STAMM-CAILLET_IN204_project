@@ -3,6 +3,10 @@
 
 #include <cmath>
 
+
+//Définition d'une classe de vecteurs à 3 éléments,
+//Et de l'intégralité des opérateurs utiles 
+//pour faciliter l'implémenation des objets par la suite
 class Vec{
 public:
     double x,y,z;
@@ -17,13 +21,18 @@ public:
             z = z/norme;
         }
     }
+
+    //calcul de la norme au carré
     double norme2(){
         return x*x+y*y+z*z;
     }
+
+    //calcul de la norme
     double norme(){
         return sqrt(norme2());
     }
 
+    //L'ensemble des opérateurs utiles pour ce vecteur
     Vec operator * (const double &f) const { return Vec(x * f, y * f, z * f); }
     Vec operator * (const Vec &v) const { return Vec(x * v.x, y * v.y, z * v.z); }
     Vec operator - (const Vec &v) const { return Vec(x - v.x, y - v.y, z - v.z); }

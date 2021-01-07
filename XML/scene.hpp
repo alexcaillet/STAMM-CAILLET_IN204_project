@@ -178,7 +178,7 @@ Vec3f trace(
 
 void render(const std::vector<Sphere> &spheres) 
 { 
-    unsigned width = 1000, height = 1000; 
+    unsigned width = 1920, height = 1080; 
     Vec3f *image = new Vec3f[width * height], *pixel = image; 
     float invWidth = 1 / float(width), invHeight = 1 / float(height); 
     float fov = 30, aspectratio = width / float(height); 
