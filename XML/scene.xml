@@ -1,0 +1,45 @@
+<scene>
+	<objects>
+		
+		<sphere>
+			<centre x="0" y="0" z="-20" />
+			<radius>4</radius>
+			<surfaceColor a="1" b="1" c="1" />
+			<emissionColor>0</emissionColor>
+			<re>1</re>
+			<tr>0.5</tr>
+		</sphere>
+
+		<sphere>
+			<centre x="5" y="-1" z="-15" />
+			<radius>2</radius>
+			<surfaceColor a="0.90" b="0.76" c="0.46" />
+			<emissionColor>0</emissionColor>
+			<re>1</re>
+			<tr>0</tr>
+		</sphere>
+
+		<sphere>
+			<centre x="5" y="0" z="-25"/>
+			<radius>3</radius>
+			<surfaceColor a="0.8" b="0.25" c="0.13" />
+			<emissionColor>0</emissionColor>
+			<re>1</re>
+			<tr>0</tr>
+		</sphere>
+
+		<sphere>
+			<centre x="-2.5" y="2" z="-15" />
+			<radius>3</radius>
+			<surfaceColor a="0.6" b="0" c="0.80" />
+			<emissionColor>0</emissionColor>
+			<re>1</re>
+			<tr>0</tr>
+		</sphere>
+
+
+		
+	</objects>
+</scene>
+
+
