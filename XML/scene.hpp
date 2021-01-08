@@ -82,7 +82,16 @@ public:
  
         return true; 
     } 
-}; 
+};
+
+class Plan
+{
+public:
+	double longueur;
+	double larg;
+	Vec3f normalVec;
+	Vec3f surfaceColor;
+}
  
 #define MAX_RAY_DEPTH 5 
  
