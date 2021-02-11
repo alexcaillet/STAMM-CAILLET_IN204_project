@@ -1,7 +1,6 @@
 #ifndef IMAGE_HPP
 #define IMAGE_HPP
 
-#include <string.h>
 #include <fstream>
 #include <vector>
 #include "vecteur.hpp"
