@@ -3,7 +3,7 @@
 #Idées 
 * Sphere 
 * Cube
-* Pland (damier ?)
+* Plan (damier ?)
 * Verre
 * Paille ?
 
