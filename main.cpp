@@ -1,8 +1,37 @@
 #include <iostream>
 #include <stdbool.h>
+#include <math.h>
+#include <memory>
 #include "vecteur.hpp"
 #include "image.hpp"
 #include "objet.hpp"
+#include "ray.hpp"
+
+#define PI 3.141592653589793
+#define INFINI 1e8
+
+/*Calcul de la couleur d'un pixel sur l'image*/
+Vec calcul_pixel(Ray rayon, std::vector<std::unique_ptr<Objet>>& objets){
+    //On commence par chercher s'il y a un point d'intersection entre le rayon et un des objets de la scène
+    double tmin = INFINI;
+    int closest_object = -1;
+    double t = INFINI;
+    for(int i=0; i<objets.size(); i++){
+        if (objets[i].intersect(rayon, &t) && t<tmin){ //encore un pb pour appeler la methode intersect
+            tmin = t;
+            closest_object = i;
+        }
+    }
+
+    //si pas d'objet sur le parcours du rayon, on renvoie la couleur d'arrière-plan
+    if(closest_object==-1){
+        return Vec(0.0, 0.0, 0.0); //on renvoie du noir
+    }
+    else{
+        return objets[closest_object].couleur;
+    }
+}
+
 
 int main()
 {
@@ -10,8 +39,8 @@ int main()
     //Test de la classe image
     // Image
 
-    const int image_width = 256;
-    const int image_height = 256;
+    const int image_width = 500;
+    const int image_height = 400;
 
     Picture image(image_width, image_height);
     // Render
@@ -34,20 +63,38 @@ int main()
     std::cerr << "\nDone.\n";
 
 
-    Sphere test_sphere;
-    Vec dir_rayon(-1.0,0.0,0.0);
-    Vec origine_rayon(5.0, 0.0, 0.0);
-    Vec point_intersection(0.0, 0.0, 0.0);
-    bool intersection = test_sphere.intersect(origine_rayon, dir_rayon, &point_intersection);
+    Picture scene(image_width, image_height);
+    double aspect_ratio = (double)image_width/(double)image_height;
 
-    std::cout << "intersection sphere : " << intersection << "   point : " << point_intersection.x << " " << point_intersection.y << " " << point_intersection.z <<std::endl;
+    //ajout d'objets
+    std::vector<std::unique_ptr<Objet>> objets;
+    objets.push_back(std::make_unique<Sphere> (Sphere(Vec(0.0, 0.0, 10.0), Vec(1.0, 0.0, 0.0), 0.0, 0.0, 1.0)));
 
-    Plan test_plan;
-    Vec dir_rayon2(0.0, 0.0, 1.0);
-    Vec origine_rayon2(0.5, 0.0, -1.0);
-    Vec point_intersection2(0.0, 0.0, 0.0);
-    bool intersection2 = test_plan.intersect(origine_rayon2, dir_rayon2, &point_intersection2);
-    
-    std::cout << "intersection plan : " << intersection2 << "   point : " << point_intersection2.x << " " << point_intersection2.y << " " << point_intersection2.z << std::endl;
+    // Camera
+
+    double viewport_height = 2.0;
+    double viewport_width = aspect_ratio * viewport_height;
+    double fov = 50; //angle de vue en degré
+    double focal_length = viewport_width/tan(PI*fov/180*0.5);
+
+    Vec origine(0.0, 0.0, 0.0);
+    Vec largeur(viewport_width, 0.0, 0.0);
+    Vec hauteur(0.0, viewport_height, 0.0);
+    Vec coin_haut_gauche = origine - largeur*0.5 + hauteur*0.5 + Vec(0.0, 0.0, focal_length);
+
+    for(int j=0; j<image_height; j++){
+        for(int i=0; i<image_width; i++){
+            double u = i/(double)(image_width-1);
+            double v = j/(double)(image_height-1);
+            Vec dir = coin_haut_gauche+largeur*u+hauteur*v-origine;
+            dir.normalize();
+            Ray rayon_incident(origine, dir);
+            scene.pixels[j*image_width + i] = calcul_pixel(rayon_incident, objets);
+        }
+    }
+
+    scene.savePicture("premier_test.ppm");
+
+
     //fin du test
 }

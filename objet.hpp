@@ -2,6 +2,7 @@
 #define OBJETHPP
 
 #include "vecteur.hpp"
+#include "ray.hpp"
 #include <stdbool.h>
 
 class Objet
@@ -22,7 +23,7 @@ public:
 	{
 	}
 
-	virtual bool intersect(Vec origine_rayon, Vec dir_rayon, Vec *point_intersection)
+	virtual bool intersect(Ray rayon, double* t)
 	{
 		return false;
 	}
@@ -57,11 +58,12 @@ public:
 	/*Calcul s'il y a une intersection du rayon avec la sphère
 	La direction du rayon est un vecteur unitaire
 	*/
-	bool intersect(Vec origine_rayon, Vec dir_rayon, Vec *point_intersection) override
+	virtual bool intersect(Ray rayon, double* t)
 	{
-		auto a = dir_rayon.dot(dir_rayon);
-		auto b = dir_rayon.dot(origine_rayon - position) * 2.0;
-		auto c = (origine_rayon - position).norme2() - radius * radius;
+		std::cout << "victoire \n";
+		auto a = rayon.direction.dot(rayon.direction);
+		auto b = rayon.direction.dot(rayon.origine - position) * 2.0;
+		auto c = (rayon.origine - position).norme2() - radius * radius;
 		auto delta = b * b - a * c * 4.0;
 
 		if (delta >= 0)
@@ -77,8 +79,7 @@ public:
 				}
 				else
 				{
-					auto t = std::min(t1, t2);
-					*point_intersection = origine_rayon + dir_rayon * t;
+					*t = std::min(t1, t2);
 					return true;
 				}
 			}
@@ -87,7 +88,7 @@ public:
 	}
 
 	/*Retourne la normale à la surface au point d'intersection*/
-	Vec normale(Vec point_intersection) override
+	virtual Vec normale(Vec point_intersection)
 	{
 		Vec normale = point_intersection - position;
 		normale.normalize();
@@ -119,12 +120,12 @@ public:
 	{
 	}
 
-	bool intersect(Vec origine_rayon, Vec dir_rayon, Vec *point_intersection) override
+	virtual bool intersect(Ray rayon, double* t)
 	{
 	}
 
 	/*Retourne la normale à la surface au point d'intersection*/
-	Vec normale(Vec point_intersection) override
+	virtual Vec normale(Vec point_intersection)
 	{
 	}
 };
@@ -153,18 +154,18 @@ public:
 	/*Calcul s'il y a une intersection du rayon avec le plan
 	La direction du rayon est un vecteur unitaire
 	*/
-	bool intersect(Vec origine_rayon, Vec dir_rayon, Vec *point_intersection) override
+	virtual bool intersect(Ray rayon, double* t)
 	{
 		auto d = -normalVector.dot(position);
-		if (normalVector.dot(dir_rayon) != 0)
+		if (normalVector.dot(rayon.direction) != 0)
 		{
 			//Il existe un point d'intersection avec le plan
-			auto t = -(normalVector.dot(origine_rayon) + d) / normalVector.dot(dir_rayon);
+			auto t1 = -(normalVector.dot(rayon.origine) + d) / normalVector.dot(rayon.direction);
 			//vérifions que ce point appartient au plan fini
-			Vec intersection = (origine_rayon + dir_rayon * t) - position;
+			Vec intersection = (rayon.origine + rayon.direction * t1) - position;
 			if (t > 0 && intersection.dot(larg) <= larg.norme() && intersection.dot(longueur) <= longueur.norme())
 			{
-				*point_intersection = intersection;
+				*t = t1;
 				return true;
 			}
 		}
@@ -172,7 +173,7 @@ public:
 	}
 
 	/*Retourne la normale à la surface au point d'intersection*/
-	Vec normale(Vec point_intersection) override
+	virtual Vec normale(Vec point_intersection)
 	{
 		return normalVector;
 	}
