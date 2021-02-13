@@ -15,6 +15,7 @@ public:
     Vec(double x1, double y1, double z1) : x(x1), y(y1), z(z1) {}
     ~Vec() {}
 
+    /*Normalise le vecteur*/
     void normalize()
     {
         double norme = this->norme();
@@ -54,6 +55,11 @@ public:
         return *this;
     }
     Vec operator-() const { return Vec(-x, -y, -z); }
+
+    //Produit scalaire
+    double dot(const Vec &v){
+        return x*v.x + y*v.y + z*v.z;
+    }
 };
 
 #endif

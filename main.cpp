@@ -1,6 +1,8 @@
 #include <iostream>
+#include <stdbool.h>
 #include "vecteur.hpp"
 #include "image.hpp"
+#include "objet.hpp"
 
 int main()
 {
@@ -29,7 +31,23 @@ int main()
         }
     }
     image.savePicture("image.ppm");
-
     std::cerr << "\nDone.\n";
+
+
+    Sphere test_sphere;
+    Vec dir_rayon(-1.0,0.0,0.0);
+    Vec origine_rayon(5.0, 0.0, 0.0);
+    Vec point_intersection(0.0, 0.0, 0.0);
+    bool intersection = test_sphere.intersect(origine_rayon, dir_rayon, &point_intersection);
+
+    std::cout << "intersection sphere : " << intersection << "   point : " << point_intersection.x << " " << point_intersection.y << " " << point_intersection.z <<std::endl;
+
+    Plan test_plan;
+    Vec dir_rayon2(0.0, 0.0, 1.0);
+    Vec origine_rayon2(0.5, 0.0, -1.0);
+    Vec point_intersection2(0.0, 0.0, 0.0);
+    bool intersection2 = test_plan.intersect(origine_rayon2, dir_rayon2, &point_intersection2);
+    
+    std::cout << "intersection plan : " << intersection2 << "   point : " << point_intersection2.x << " " << point_intersection2.y << " " << point_intersection2.z << std::endl;
     //fin du test
 }
