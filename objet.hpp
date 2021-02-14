@@ -33,8 +33,7 @@ public:
 		return Vec(0.0, 0.0, 0.0);
 	}
 
-	/*~Objet()
-    {}*/
+	virtual ~Objet(){}
 };
 
 //Définition d'un object classique : La sphère
@@ -54,6 +53,8 @@ public:
 	Sphere(Vec pos, Vec col, double reflec, double transp, double rad) : Objet(pos, col, reflec, transp), radius(rad)
 	{
 	}
+
+	~Sphere(){};
 
 	/*Calcul s'il y a une intersection du rayon avec la sphère
 	La direction du rayon est un vecteur unitaire

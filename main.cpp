@@ -11,7 +11,7 @@
 #define INFINI 1e8
 
 /*Calcul de la couleur d'un pixel sur l'image*/
-Vec calcul_pixel(Ray rayon, std::vector<std::unique_ptr<Objet>>& objets){
+Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets){
     //On commence par chercher s'il y a un point d'intersection entre le rayon et un des objets de la scène
     double tmin = INFINI;
     int closest_object = -1;
@@ -67,8 +67,12 @@ int main()
     double aspect_ratio = (double)image_width/(double)image_height;
 
     //ajout d'objets
-    std::vector<std::unique_ptr<Objet>> objets;
-    objets.push_back(std::make_unique<Sphere> (Sphere(Vec(0.0, 0.0, -20.0), Vec(255.0, 0.0, 0.0), 0.0, 0.0, 2.0)));
+    std::vector<Objet *> objets;
+    //Sphere(Vec(0.0, 0.0, -20.0), Vec(255.0, 150.0, 0.0), 0.0, 0.0, 2.0);
+
+    
+
+    objets.push_back( new Sphere(Vec(0.0, 0.0, -20.0), Vec(255.0, 150.0, 0.0), 0.0, 0.0, 2.0));
 
     // Camera
 
@@ -89,15 +93,15 @@ int main()
             Vec dir = coin_haut_gauche+largeur*u-hauteur*v-origine;
             dir.normalize();
             Ray rayon_incident(origine, dir);
-            if (i==image_width/2-1 && j==image_height/2-1){
-                std::cout << dir.x << " " << dir.y << " " << dir.z << std::endl;
-            }
             scene.pixels[j*image_width + i] = calcul_pixel(rayon_incident, objets);
         }
     }
 
     scene.savePicture("premier_test.ppm");
 
+    for(int i=0; i<objets.size(); i++){
+        delete objets[i];
+    }
 
     //fin du test
 }
