@@ -28,7 +28,9 @@ Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets){
         return Vec(0.0, 0.0, 0.0); //on renvoie du noir
     }
     else{
-        return objets[closest_object]->couleur;
+        Vec point_intersection = rayon.origine + rayon.direction*tmin;
+        Vec normale = objets[closest_object]->normale(point_intersection);
+        return objets[closest_object]->couleur * abs(normale.dot(rayon.direction));
     }
 }
 
@@ -92,37 +94,10 @@ int main()
 
     //ajout d'objets
     std::vector<Objet *> objets;
-    objets.push_back( new Sphere(Vec(0.0, 0.0, -20.0), Vec(255.0, 200.0, 0.0), 0.0, 0.0, 2.0));
-    /*
-    Picture scene(image_width, image_height);
-    double aspect_ratio = (double)image_width/(double)image_height;
+    objets.push_back( new Sphere(Vec(-1.5, 0.0, -20.0), Vec(255.0, 0.0, 0.0), 0.0, 0.0, 2.0));
+    objets.push_back( new Sphere(Vec(1.5, 0.0, -20.0), Vec(255.0, 0.0, 0.0), 0.0, 0.0, 2.0));
+    objets.push_back( new Sphere(Vec(0.0, -2.0, -20.0), Vec(255.0, 0.0, 0.0), 0.0, 0.0, 2.0));
 
-
-    // Camera
-
-    double viewport_height = 2.0;
-    double viewport_width = aspect_ratio * viewport_height;
-    double fov = 60; //angle de vue en degré
-    double focal_length = viewport_width/tan(PI*fov/180*0.5);
-
-    Vec origine(0.0, 0.0, 0.0);
-    Vec largeur(viewport_width, 0.0, 0.0);
-    Vec hauteur(0.0, viewport_height, 0.0);
-    Vec coin_haut_gauche = origine - largeur*0.5 + hauteur*0.5 - Vec(0.0, 0.0, focal_length);
-
-    for(int j=0; j<image_height; j++){
-        for(int i=0; i<image_width; i++){
-            double u = i/(double)(image_width-1);
-            double v = j/(double)(image_height-1);
-            Vec dir = coin_haut_gauche+largeur*u-hauteur*v-origine;
-            dir.normalize();
-            Ray rayon_incident(origine, dir);
-            scene.pixels[j*image_width + i] = calcul_pixel(rayon_incident, objets);
-        }
-    }
-
-    scene.savePicture("premier_test.ppm");
-*/
     int fov = 60;
     rendu(objets, image_width, image_height, fov, "premier_test.ppm");
     for(int i=0; i<objets.size(); i++){
