@@ -17,7 +17,7 @@ Vec calcul_pixel(Ray rayon, std::vector<std::unique_ptr<Objet>>& objets){
     int closest_object = -1;
     double t = INFINI;
     for(int i=0; i<objets.size(); i++){
-        if (objets[i].intersect(rayon, &t) && t<tmin){ //encore un pb pour appeler la methode intersect
+        if (objets[i]->intersect(rayon, &t) && t<tmin){ //encore un pb pour appeler la methode intersect
             tmin = t;
             closest_object = i;
         }
@@ -28,7 +28,7 @@ Vec calcul_pixel(Ray rayon, std::vector<std::unique_ptr<Objet>>& objets){
         return Vec(0.0, 0.0, 0.0); //on renvoie du noir
     }
     else{
-        return objets[closest_object].couleur;
+        return objets[closest_object]->couleur;
     }
 }
 
@@ -68,27 +68,30 @@ int main()
 
     //ajout d'objets
     std::vector<std::unique_ptr<Objet>> objets;
-    objets.push_back(std::make_unique<Sphere> (Sphere(Vec(0.0, 0.0, 10.0), Vec(1.0, 0.0, 0.0), 0.0, 0.0, 1.0)));
+    objets.push_back(std::make_unique<Sphere> (Sphere(Vec(0.0, 0.0, -20.0), Vec(255.0, 0.0, 0.0), 0.0, 0.0, 2.0)));
 
     // Camera
 
     double viewport_height = 2.0;
     double viewport_width = aspect_ratio * viewport_height;
-    double fov = 50; //angle de vue en degré
+    double fov = 60; //angle de vue en degré
     double focal_length = viewport_width/tan(PI*fov/180*0.5);
 
     Vec origine(0.0, 0.0, 0.0);
     Vec largeur(viewport_width, 0.0, 0.0);
     Vec hauteur(0.0, viewport_height, 0.0);
-    Vec coin_haut_gauche = origine - largeur*0.5 + hauteur*0.5 + Vec(0.0, 0.0, focal_length);
+    Vec coin_haut_gauche = origine - largeur*0.5 + hauteur*0.5 - Vec(0.0, 0.0, focal_length);
 
     for(int j=0; j<image_height; j++){
         for(int i=0; i<image_width; i++){
             double u = i/(double)(image_width-1);
             double v = j/(double)(image_height-1);
-            Vec dir = coin_haut_gauche+largeur*u+hauteur*v-origine;
+            Vec dir = coin_haut_gauche+largeur*u-hauteur*v-origine;
             dir.normalize();
             Ray rayon_incident(origine, dir);
+            if (i==image_width/2-1 && j==image_height/2-1){
+                std::cout << dir.x << " " << dir.y << " " << dir.z << std::endl;
+            }
             scene.pixels[j*image_width + i] = calcul_pixel(rayon_incident, objets);
         }
     }

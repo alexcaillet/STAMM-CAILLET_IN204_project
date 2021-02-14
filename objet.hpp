@@ -60,7 +60,6 @@ public:
 	*/
 	virtual bool intersect(Ray rayon, double* t)
 	{
-		std::cout << "victoire \n";
 		auto a = rayon.direction.dot(rayon.direction);
 		auto b = rayon.direction.dot(rayon.origine - position) * 2.0;
 		auto c = (rayon.origine - position).norme2() - radius * radius;
