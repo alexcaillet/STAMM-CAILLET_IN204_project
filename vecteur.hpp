@@ -56,6 +56,8 @@ public:
     }
     Vec operator-() const { return Vec(-x, -y, -z); }
 
+    Vec prod_vec(const Vec &v) const {return Vec(y*v.z-v.y*z, z*v.x-x*v.z, x*v.y-v.x*y); }
+
     //Produit scalaire
     double dot(const Vec &v){
         return x*v.x + y*v.y + z*v.z;

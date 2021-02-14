@@ -16,8 +16,8 @@ Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets){
     double tmin = INFINI;
     int closest_object = -1;
     double t = INFINI;
-    for(int i=0; i<objets.size(); i++){
-        if (objets[i]->intersect(rayon, &t) && t<tmin){ //encore un pb pour appeler la methode intersect
+    for(unsigned int i=0; i<objets.size(); i++){
+        if (objets[i]->intersect(rayon, &t) && t<tmin){
             tmin = t;
             closest_object = i;
         }
@@ -29,8 +29,8 @@ Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets){
     }
     else{
         Vec point_intersection = rayon.origine + rayon.direction*tmin;
-        Vec normale = objets[closest_object]->normale(point_intersection);
-        return objets[closest_object]->couleur * abs(normale.dot(rayon.direction));
+        //Vec normale = objets[closest_object]->normale(point_intersection);
+        return objets[closest_object]->couleur; //* abs(normale.dot(rayon.direction));
     }
 }
 
@@ -69,10 +69,10 @@ int main()
     //Test de la classe image
     // Image
 
-    const int image_width = 500;
-    const int image_height = 400;
+    const int image_width = 320;
+    const int image_height = 180;
 
-    Picture image(image_width, image_height);
+    /*Picture image(image_width, image_height);
     // Render
     for (int j = 0; j<image_height; ++j)
     {
@@ -90,17 +90,19 @@ int main()
         }
     }
     image.savePicture("image.ppm");
-    std::cerr << "\nDone.\n";
+    std::cerr << "\nDone.\n";*/
 
     //ajout d'objets
     std::vector<Objet *> objets;
-    objets.push_back( new Sphere(Vec(-1.5, 0.0, -20.0), Vec(255.0, 0.0, 0.0), 0.0, 0.0, 2.0));
-    objets.push_back( new Sphere(Vec(1.5, 0.0, -20.0), Vec(255.0, 0.0, 0.0), 0.0, 0.0, 2.0));
-    objets.push_back( new Sphere(Vec(0.0, -2.0, -20.0), Vec(255.0, 0.0, 0.0), 0.0, 0.0, 2.0));
+    //objets.push_back( new Sphere(Vec(-1.5, 0.0, -20.0), Vec(0.0, 0.0, 255.0), 0.0, 0.0, 2.0));
+    //objets.push_back( new Sphere(Vec(1.5, 0.0, -25.0), Vec(255.0, 160.0, 0.0), 0.0, 0.0, 2.0));
+    //objets.push_back( new Sphere(Vec(0.0, -2.0, -15.0), Vec(255.0, 0.0, 150.0), 0.0, 0.0, 2.0));
+    objets.push_back(new Parallelepipede());
+    objets[0]->position = Vec(0.0, 0.0, -15.0);
 
     int fov = 60;
     rendu(objets, image_width, image_height, fov, "premier_test.ppm");
-    for(int i=0; i<objets.size(); i++){
+    for(unsigned int i=0; i<objets.size(); i++){
         delete objets[i];
     }
 
