@@ -128,9 +128,9 @@ public:
 		{
 			//Il existe un point d'intersection avec le plan
 			auto t1 = -(normalVector.dot(rayon.origine) + d) / normalVector.dot(rayon.direction);
-			//vérifions que ce point appartient au plan fini
+			//Vérifions que ce point appartient au plan fini
 			Vec intersection = (rayon.origine + rayon.direction * t1) - position;
-			if (t > 0 && intersection.dot(largeur) <= largeur.norme() && intersection.dot(longueur) <= longueur.norme())
+			if (*t > 0 && intersection.dot(largeur) <= largeur.norme() && intersection.dot(longueur) <= longueur.norme())
 			{
 				*t = t1;
 				return true;
@@ -142,7 +142,7 @@ public:
 	/*Retourne la normale à la surface au point d'intersection*/
 	virtual Vec normale(Vec point_intersection)
 	{
-		return normalVector;
+		return -normalVector;
 	}
 };
 
