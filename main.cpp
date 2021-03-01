@@ -25,7 +25,7 @@ Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets){
 
     //si pas d'objet sur le parcours du rayon, on renvoie la couleur d'arrière-plan
     if(closest_object==-1){
-        return Vec(0.0, 0.0, 0.0); //on renvoie du noir
+        return Vec(10.0, 10.0, 10.0);
     }
     else{
         Vec point_intersection = rayon.origine + rayon.direction*tmin;
@@ -69,8 +69,8 @@ int main()
     //Test de la classe image
     // Image
 
-    const int image_width = 320;
-    const int image_height = 180;
+    const int image_width = 640;
+    const int image_height = 360;
 
     /*Picture image(image_width, image_height);
     // Render
@@ -96,12 +96,14 @@ int main()
     std::vector<Objet *> objets;
     //objets.push_back( new Sphere(Vec(-1.5, 0.0, -20.0), Vec(0.0, 0.0, 255.0), 0.0, 0.0, 2.0));
     //objets.push_back( new Sphere(Vec(1.5, 0.0, -25.0), Vec(255.0, 160.0, 0.0), 0.0, 0.0, 2.0));
-    //objets.push_back( new Sphere(Vec(0.0, -2.0, -15.0), Vec(255.0, 0.0, 150.0), 0.0, 0.0, 2.0));
-    objets.push_back( new Plan(Vec(0.0, 0.0, -30.0), Vec(0.0, 255.0, 0.0), 0.0, 0.0, Vec(-1.0, 0.0, -0.5), Vec(0.0, -1.0, -0.5)));
-    //objets.push_back(new Parallelepipede());
-    //objets[0]->position = Vec(0.0, 0.0, -15.0);
+    //objets.push_back( new Sphere(Vec(0.0, 0.0, -30.0), Vec(0.0, 0.0, 150.0), 0.0, 0.0, 2.0));
+    //objets.push_back( new Sphere(Vec(0.0, 0.0, -20.0), Vec(255.0, 0.0, 150.0), 0.0, 0.0, 1.0));
+    objets.push_back( new Plan(Vec(0.0, 0.0, -35.0), Vec(0.0, 255.0, 0.0), 0.0, 0.0, Vec(3.0, 0.0, -5.0), Vec(0.0, 3.0, 0.0)));
+    objets.push_back( new Plan(Vec(0.0, 0.0, -35.0), Vec(0.0, 0.0, 255.0), 0.0, 0.0, Vec(-3.0, 0.0, -5.0), Vec(0.0, 3.0, 0.0)));
+    //objets.push_back( new Parallelepipede());
+    //objets.push_back( new Parallelepipede(Vec(0.0, 0.0,-20.0), Vec(255.0, 0.0, 0.0), 0.0, 0.0, Vec(0.0, 10.0, 0.0), Vec(5.0*sqrt(2), 0.0, -5.0*sqrt(2)), Vec(-5.0*sqrt(2), 0.0, -5.0*sqrt(2))));
 
-    int fov = 60;
+    int fov = 90;
     rendu(objets, image_width, image_height, fov, "premier_test.ppm");
     for(unsigned int i=0; i<objets.size(); i++){
         delete objets[i];

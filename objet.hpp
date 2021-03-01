@@ -118,6 +118,26 @@ public:
 		normalVector.normalize();
 	}
 
+	/*Indique si un point du plan appartient au plan fini ou non
+	*/
+	bool belong_to(Vec point){
+		Vec point_loc = point - position;
+		Vec vec_unit_longueur = longueur;
+		Vec vec_unit_largeur = largeur;
+		vec_unit_longueur.normalize();
+		vec_unit_largeur.normalize();
+		double proj_largeur = point_loc.dot(vec_unit_largeur);
+		double proj_longueur = point_loc.dot(vec_unit_longueur);
+
+		if (proj_largeur <= largeur.norme() && proj_largeur >=0 && proj_longueur <= longueur.norme() && proj_longueur>=0)
+			{
+				return true;
+			}
+		else{
+			return false;
+		}
+	}
+
 	/*Calcul s'il y a une intersection du rayon avec le plan
 	La direction du rayon est un vecteur unitaire
 	*/
@@ -128,9 +148,11 @@ public:
 		{
 			//Il existe un point d'intersection avec le plan
 			auto t1 = -(normalVector.dot(rayon.origine) + d) / normalVector.dot(rayon.direction);
+
 			//Vérifions que ce point appartient au plan fini
-			Vec intersection = (rayon.origine + rayon.direction * t1) - position;
-			if (*t > 0 && intersection.dot(largeur) <= largeur.norme() && intersection.dot(longueur) <= longueur.norme())
+			Vec intersection = rayon.origine + rayon.direction * t1;
+			
+			if (belong_to(intersection))
 			{
 				*t = t1;
 				return true;
@@ -142,7 +164,7 @@ public:
 	/*Retourne la normale à la surface au point d'intersection*/
 	virtual Vec normale(Vec point_intersection)
 	{
-		return -normalVector;
+		return normalVector;
 	}
 };
 
@@ -181,7 +203,7 @@ public:
 		faces.push_back(&face_lat3);
 		faces.push_back(&face_lat4);
 
-		//On regarde s'il existe des intersections avec l'extéieur de ces plans
+		//On regarde s'il existe des intersections avec l'extérieur de ces plans
 		double tmin = INFINI;
     	int closest_face = -1;
     	double tloc = INFINI;
@@ -200,7 +222,30 @@ public:
 
 	/*Retourne la normale à la surface au point d'intersection*/
 	virtual Vec normale(Vec point_intersection){
+		//On définit les 6 plans formant le parallelepipede
+		Plan dessous(position, couleur, reflectivite, transparence, longueur, largeur);
+		Plan dessus(position+hauteur, couleur, reflectivite, transparence, longueur, largeur);
+		Plan face_lat1(position, couleur, reflectivite, transparence, longueur, hauteur);
+		Plan face_lat2(position+longueur, couleur, reflectivite, transparence, largeur, hauteur);
+		Plan face_lat3(position+longueur+largeur, couleur, reflectivite, transparence, -longueur, hauteur);
+		Plan face_lat4(position, couleur, reflectivite, transparence, largeur, hauteur);
 
+		std::vector<Plan *> faces;
+		faces.push_back(&dessous);
+		faces.push_back(&dessus);
+		faces.push_back(&face_lat1);
+		faces.push_back(&face_lat2);
+		faces.push_back(&face_lat3);
+		faces.push_back(&face_lat4);
+
+		unsigned int i=0;
+		while(!(faces[i]->belong_to(point_intersection))){
+			if (i>faces.size()){
+				std::cout << "Errrreuuuur \n";
+			}
+			i++;
+		}
+		return faces[i]->normalVector;
 	}
 };
 
