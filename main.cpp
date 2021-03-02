@@ -77,8 +77,8 @@ int main()
     /*const int image_width = 640;
     const int image_height = 360;*/
 
-    const int image_width = 1920;
-    const int image_height = 1080;
+    /*const int image_width = 1920;
+    const int image_height = 1080;*/
 
 
     /*Picture image(image_width, image_height);

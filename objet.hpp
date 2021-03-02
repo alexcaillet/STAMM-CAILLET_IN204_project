@@ -89,12 +89,12 @@ public:
 	}
 
 	/*Retourne la normale à la surface au point d'intersection*/
-	/*virtual Vec normale(Vec point_intersection)
+	virtual Vec normale(Vec point_intersection)
 	{
 		Vec normale = point_intersection - position;
 		normale.normalize();
 		return normale;
-	}*/
+	}
 };
 
 class Plan : public virtual Objet
@@ -162,10 +162,10 @@ public:
 	}
 
 	/*Retourne la normale à la surface au point d'intersection*/
-	/*virtual Vec normale(Vec point_intersection)
+	virtual Vec normale(Vec point_intersection)
 	{
 		return normalVector;
-	}*/
+	}
 };
 
 class Parallelepipede : public virtual Objet
