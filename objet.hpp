@@ -205,13 +205,11 @@ public:
 
 		//On regarde s'il existe des intersections avec l'extérieur de ces plans
 		double tmin = INFINI;
-    	int closest_face = -1;
     	double tloc = INFINI-1;
 		Vec normale_temp;
 		for(unsigned int i=0; i<faces.size(); i++){
 			if (faces[i]->intersect(rayon, &tloc, &normale_temp) && tloc<tmin){
 				tmin = tloc;
-				closest_face = i;
 				*normale = normale_temp;
 			}
 		}

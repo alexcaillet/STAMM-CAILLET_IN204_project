@@ -64,7 +64,8 @@ void rendu(std::vector<Objet *> objets, int image_width, int image_height, int f
             scene.pixels[j*image_width + i] = calcul_pixel(rayon_incident, objets);
         }
     }
-    scene.savePicture(filename);
+    scene.savePicture("test_savePicture.ppm", 0);
+    scene.savePicture("test_savePicture.jpeg", 1);
 }
 
 
@@ -74,8 +75,8 @@ int main()
     //Test de la classe image
     // Image
 
-    /*const int image_width = 640;
-    const int image_height = 360;*/
+    const int image_width = 640;
+    const int image_height = 360;
 
     /*const int image_width = 1920;
     const int image_height = 1080;*/
