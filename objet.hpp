@@ -17,7 +17,7 @@ public:
 	double reflectivite;
 	double transparence;
 
-	Objet() : position(Vec(0, 0, 0)), couleur(Vec(255.0, 0.0, 0.0)), reflectivite(0.5), transparence(0.5)
+	Objet() : position(Vec(0, 0, -35.0)), couleur(Vec(255.0, 0.0, 0.0)), reflectivite(0.5), transparence(0.5)
 	{
 	}
 
@@ -25,15 +25,12 @@ public:
 	{
 	}
 
-	virtual bool intersect(Ray rayon, double* t)
+	//Méthode intersect, virtuelle pure pour s'adapter à chaque type d'objet
+	virtual bool intersect(Ray rayon, double* t, Vec* normale)
 	{
 		return false;
 	}
-	//Méthode normale(), virtuelle pure pour s'adapter à chaque type d'objet
-	virtual Vec normale(Vec point_intersection)
-	{
-		return Vec(0.0, 0.0, 0.0);
-	}
+	
 
 	virtual ~Objet(){}
 };
@@ -61,7 +58,7 @@ public:
 	/*Calcul s'il y a une intersection du rayon avec la sphère
 	La direction du rayon est un vecteur unitaire
 	*/
-	virtual bool intersect(Ray rayon, double* t)
+	virtual bool intersect(Ray rayon, double* t, Vec* normale)
 	{
 		auto a = rayon.direction.dot(rayon.direction);
 		auto b = rayon.direction.dot(rayon.origine - position) * 2.0;
@@ -82,6 +79,8 @@ public:
 				else
 				{
 					*t = std::min(t1, t2);
+					*normale = rayon.origine+rayon.direction* (*t) - position;
+					(*normale).normalize();
 					return true;
 				}
 			}
@@ -90,12 +89,12 @@ public:
 	}
 
 	/*Retourne la normale à la surface au point d'intersection*/
-	virtual Vec normale(Vec point_intersection)
+	/*virtual Vec normale(Vec point_intersection)
 	{
 		Vec normale = point_intersection - position;
 		normale.normalize();
 		return normale;
-	}
+	}*/
 };
 
 class Plan : public virtual Objet
@@ -141,7 +140,7 @@ public:
 	/*Calcul s'il y a une intersection du rayon avec le plan
 	La direction du rayon est un vecteur unitaire
 	*/
-	virtual bool intersect(Ray rayon, double* t)
+	virtual bool intersect(Ray rayon, double* t, Vec* normale)
 	{
 		auto d = -normalVector.dot(position);
 		if (normalVector.dot(rayon.direction) != 0)
@@ -155,6 +154,7 @@ public:
 			if (belong_to(intersection))
 			{
 				*t = t1;
+				*normale = normalVector;
 				return true;
 			}
 		}
@@ -162,10 +162,10 @@ public:
 	}
 
 	/*Retourne la normale à la surface au point d'intersection*/
-	virtual Vec normale(Vec point_intersection)
+	/*virtual Vec normale(Vec point_intersection)
 	{
 		return normalVector;
-	}
+	}*/
 };
 
 class Parallelepipede : public virtual Objet
@@ -185,13 +185,13 @@ public:
 
 
 	/*Renvoie s'il existe une intersection avec le parallelepipe et renvoie le parametre permettant de calculer le point d'intersection*/
-	virtual bool intersect(Ray rayon, double* t)
+	virtual bool intersect(Ray rayon, double* t, Vec* normale)
 	{
 		//On définit les 6 plans formant le parallelepipede
 		Plan dessous(position, couleur, reflectivite, transparence, longueur, largeur);
-		Plan dessus(position+hauteur, couleur, reflectivite, transparence, longueur, largeur);
-		Plan face_lat1(position, couleur, reflectivite, transparence, longueur, hauteur);
-		Plan face_lat2(position+longueur, couleur, reflectivite, transparence, largeur, hauteur);
+		Plan dessus(position+hauteur, couleur, reflectivite, transparence, largeur, longueur);
+		Plan face_lat1(position, couleur, reflectivite, transparence, hauteur, longueur);
+		Plan face_lat2(position+longueur, couleur, reflectivite, transparence, hauteur, largeur);
 		Plan face_lat3(position+longueur+largeur, couleur, reflectivite, transparence, -longueur, hauteur);
 		Plan face_lat4(position, couleur, reflectivite, transparence, largeur, hauteur);
 
@@ -206,11 +206,13 @@ public:
 		//On regarde s'il existe des intersections avec l'extérieur de ces plans
 		double tmin = INFINI;
     	int closest_face = -1;
-    	double tloc = INFINI;
+    	double tloc = INFINI-1;
+		Vec normale_temp;
 		for(unsigned int i=0; i<faces.size(); i++){
-			if (faces[i]->intersect(rayon, &tloc) && tloc<tmin){
+			if (faces[i]->intersect(rayon, &tloc, &normale_temp) && tloc<tmin){
 				tmin = tloc;
 				closest_face = i;
+				*normale = normale_temp;
 			}
 		}
 		if (tmin != INFINI){
@@ -224,9 +226,9 @@ public:
 	virtual Vec normale(Vec point_intersection){
 		//On définit les 6 plans formant le parallelepipede
 		Plan dessous(position, couleur, reflectivite, transparence, longueur, largeur);
-		Plan dessus(position+hauteur, couleur, reflectivite, transparence, longueur, largeur);
-		Plan face_lat1(position, couleur, reflectivite, transparence, longueur, hauteur);
-		Plan face_lat2(position+longueur, couleur, reflectivite, transparence, largeur, hauteur);
+		Plan dessus(position+hauteur, couleur, reflectivite, transparence, largeur, longueur);
+		Plan face_lat1(position, couleur, reflectivite, transparence, hauteur, longueur);
+		Plan face_lat2(position+longueur, couleur, reflectivite, transparence, hauteur, largeur);
 		Plan face_lat3(position+longueur+largeur, couleur, reflectivite, transparence, -longueur, hauteur);
 		Plan face_lat4(position, couleur, reflectivite, transparence, largeur, hauteur);
 
