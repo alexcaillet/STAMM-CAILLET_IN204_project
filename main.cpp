@@ -9,17 +9,20 @@
 
 #define PI 3.141592653589793
 #define INFINI 1e8
+
 #define rouge Vec(255.0, 0.0, 0.0)
 #define bleu Vec(0, 0.0, 255.0)
 #define vert Vec(0, 255.0, 0.0)
 #define gris Vec(50.0, 50.0, 50.0)
+#define blanc Vec(255, 255, 255)
+#define noir Vec(0,0,0)
 
 float mix(const float &a, const float &b, const float &mix) 
 { 
     return b * mix + a * (1 - mix); 
 } 
 
-#define max_depth 1000
+#define max_depth 10
 /*Calcul de la couleur d'un pixel sur l'image*/
 Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets, int depth){
     //On commence par chercher s'il y a un point d'intersection entre le rayon et un des objets de la scène
@@ -48,6 +51,10 @@ Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets, int depth){
     //pour contrer l'"acnée de reflexion"
     float bias = 1e-4;
     if (closest_object->reflectivite > 0 && depth < max_depth) { 
+        /*
+        if(closest_object_index==2 && depth>0){
+            std::cout << depth << std::endl;
+        }*/
         
         /*if (depth >0){
         std :: cout << "reflexion de profondeur " << depth << std :: endl;}*/
@@ -61,9 +68,10 @@ Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets, int depth){
         reflecdir.normalize(); 
         Ray new_rayon(point_intersection-normale*bias, reflecdir);
         depth++;
-        Vec reflection = calcul_pixel(new_rayon, objets, depth); 
+        Vec reflection = calcul_pixel(new_rayon, objets, depth);
+        //std::cout << reflection.x << " " << reflection.y << " " << reflection.z << std::endl; 
 
-        pixel_color =  closest_object->couleur*(1-closest_object->reflectivite) + reflection * fresneleffect * closest_object->reflectivite;
+        pixel_color =  closest_object->couleur*(1-closest_object->reflectivite) + reflection /** fresneleffect*/ * closest_object->reflectivite;
     }
 
     else{
@@ -98,8 +106,8 @@ void rendu(std::vector<Objet *> objets, int image_width, int image_height, int f
             scene.pixels[j*image_width + i] = calcul_pixel(rayon_incident, objets,0);
         }
     }
-    //scene.savePicture("test_savePicture.ppm", 0);
-    scene.savePicture("test_savePicture.jpeg", 1);
+
+    scene.savePicture("test_savePicture.png", 2);
 }
 
 
@@ -108,7 +116,7 @@ int main()
 
     //Test de la classe image
     // Image
-
+    
     const int image_width = 640;
     const int image_height = 360;
 
@@ -145,17 +153,18 @@ int main()
     std::vector<Objet *> objets;
     //objets.push_back( new Sphere(Vec(-1.5, 0.0, -20.0), Vec(0.0, 0.0, 255.0), 0.0, 0.0, 2.0));
 
-    objets.push_back( new Sphere(Vec(3.0, 0.0, -20.0), rouge, 0.9, 0.0, 2.0));
-    objets.push_back( new Sphere(Vec(0.0, 0.0, -25.0), vert, 0.9, 0.0, 2.0));
+    //objets.push_back( new Sphere(Vec(3.0, 0.0, -20.0), rouge, 0.9, 0.0, 2.0));
+    //objets.push_back( new Sphere(Vec(0.0, 0.0, -25.0), vert, 0.9, 0.0, 2.0));
     objets.push_back( new Sphere(Vec(-3.0, 0.0, -20.0), bleu, 0.9, 0.0, 2.0));
-    objets.push_back( new Sphere(Vec(0.0, 5.0, -20.0), Vec(255.0, 255.0, 255.0), 0.9, 0.0, 2.0));
+    //objets.push_back( new Sphere(Vec(0.0, 5.0, -20.0), Vec(255.0, 255.0, 255.0), 0.9, 0.0, 2.0));
+
     //objets.push_back( new Sphere(Vec(0.0, -100.5, 0.0), vert, 0.5, 0.0, 100.0));
 
     //objets.push_back( new Sphere(Vec(-3.0, 10.0, -20.0), Vec(255.0, 0.0, 150.0), 0.0, 0.0, 1.0));
     //objets.push_back( new Plan(Vec(0.0, 0.0, -35.0), vert, 0.0, 0.0, Vec(3.0, 0.0, -5.0), Vec(0.0, 3.0, 0.0)));
     //objets.push_back( new Plan(Vec(0.0, 0.0, -35.0), bleu, 0.0, 0.0, Vec(-3.0, 0.0, -5.0), Vec(0.0, 3.0, 0.0)));
-    //objets.push_back( new Plan(Vec(0.0, 0.0, -40.0), rouge, 0.0, 0.0, Vec(-5.0, 0.0, -5.0), Vec(0.0, 5.0, 0.0)));
-    objets.push_back( new Plan(Vec(-5.0, -3.0, -15.0), vert, 0.0, 0.0, Vec(10, 0.0, 0.0), Vec(0.0, 0.0, -20.0)));
+    objets.push_back( new Plan(Vec(0.0, 0.0, -40.0), rouge, 0.0, 0.0, Vec(-5.0, 0.0, -5.0), Vec(0.0, 5.0, 0.0)));
+    objets.push_back( new Plan(Vec(-8.0, -3.0, -15.0), vert, 0.9, 0.0, Vec(15, 0.0, 0.0), Vec(0.0, 0.0, -20.0)));
     //objets.push_back( new Plan);
     //objets.push_back( new Parallelepipede(Vec(-4.0, 1.0,-15.0), rouge, 0.0, 0.0, Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2)).prod_vec(Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)))*0.25, Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)), Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2))));
 

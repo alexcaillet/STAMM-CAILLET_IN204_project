@@ -23,6 +23,7 @@ class Picture
     /** Sauvegarde de l'image finale au format choisi
      * ppm | 0
      * jpeg | 1
+     * png | 2
      */
     void savePicture(char const *filename, unsigned int format){
         switch (format)
@@ -32,6 +33,9 @@ class Picture
             break;
         case 1:
             savePictureJpeg(filename);
+            break;
+        case 2:
+            savePicturePNG(filename);
             break;
         default:
             std::cerr << "Erreur : le format demandé est incorrect. Choisissez ppm, jpeg ou png \n";
@@ -66,6 +70,18 @@ private:
             img[3*i+2]=(char)(int)pixels[i].z;
         }
         stbi_write_jpg(filename, w, h, 3, img, 100);
+        free(img);
+    }
+
+    /**Sauvegarde l'image au format png **/
+    void savePicturePNG(char const *filename){
+        unsigned char* img = (unsigned char*)malloc(w*h*3*sizeof(char));
+        for(int i=0; i<w*h; i++){
+            img[3*i]=(char)(int)pixels[i].x;
+            img[3*i+1]=(char)(int)pixels[i].y;
+            img[3*i+2]=(char)(int)pixels[i].z;
+        }
+        stbi_write_png(filename, w, h, 3, img, w*3);
         free(img);
     }
 
