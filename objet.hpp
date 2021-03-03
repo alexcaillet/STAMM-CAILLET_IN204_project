@@ -4,6 +4,7 @@
 #include "vecteur.hpp"
 #include "ray.hpp"
 #include <stdbool.h>
+#include <math.h> 
 
 #define INFINI 1e8
 
@@ -58,6 +59,7 @@ public:
 	/*Calcul s'il y a une intersection du rayon avec la sphère
 	La direction du rayon est un vecteur unitaire
 	*/
+	
 	virtual bool intersect(Ray rayon, double* t, Vec* normale)
 	{
 		auto a = rayon.direction.dot(rayon.direction);
@@ -147,6 +149,9 @@ public:
 		{
 			//Il existe un point d'intersection avec le plan
 			auto t1 = -(normalVector.dot(rayon.origine) + d) / normalVector.dot(rayon.direction);
+			
+			if (t1 <= 0)
+				return false;
 
 			//Vérifions que ce point appartient au plan fini
 			Vec intersection = rayon.origine + rayon.direction * t1;

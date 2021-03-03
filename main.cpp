@@ -19,7 +19,7 @@ float mix(const float &a, const float &b, const float &mix)
     return b * mix + a * (1 - mix); 
 } 
 
-#define max_depth 10
+#define max_depth 1000
 /*Calcul de la couleur d'un pixel sur l'image*/
 Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets, int depth){
     //On commence par chercher s'il y a un point d'intersection entre le rayon et un des objets de la scène
@@ -48,6 +48,9 @@ Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets, int depth){
     //pour contrer l'"acnée de reflexion"
     float bias = 1e-4;
     if (closest_object->reflectivite > 0 && depth < max_depth) { 
+        
+        /*if (depth >0){
+        std :: cout << "reflexion de profondeur " << depth << std :: endl;}*/
         float facingratio = -rayon.direction.dot(normale); 
         // change the mix value to tweak the effect
         float fresneleffect = mix(pow(1 - facingratio, 3), 1, 0.1);
@@ -60,14 +63,14 @@ Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets, int depth){
         depth++;
         Vec reflection = calcul_pixel(new_rayon, objets, depth); 
 
-        pixel_color =  closest_object->couleur*(1-closest_object->reflectivite) + reflection * /*fresneleffect **/ closest_object->reflectivite;
+        pixel_color =  closest_object->couleur*(1-closest_object->reflectivite) + reflection * fresneleffect * closest_object->reflectivite;
     }
 
     else{
-        pixel_color = closest_object->couleur ;//* abs(normale.dot(rayon.direction));
+        pixel_color = closest_object->couleur ;//abs(normale.dot(rayon.direction));
     }
 
-    return pixel_color ;// * abs(normale.dot(rayon.direction));
+    return pixel_color; //abs(normale.dot(rayon.direction));
 }
 
 void rendu(std::vector<Objet *> objets, int image_width, int image_height, int fov, const std::string &filename){
@@ -109,8 +112,13 @@ int main()
     const int image_width = 640;
     const int image_height = 360;
 
-    /*const int image_width = 1920;
-    const int image_height = 1080;*/
+    //const int image_width = 1920;
+    //const int image_height = 1080;
+
+    //16K
+    //const int image_width = 15360;
+    //const int image_height = 8640;
+
 
 
     /*Picture image(image_width, image_height);
@@ -136,15 +144,20 @@ int main()
     //ajout d'objets
     std::vector<Objet *> objets;
     //objets.push_back( new Sphere(Vec(-1.5, 0.0, -20.0), Vec(0.0, 0.0, 255.0), 0.0, 0.0, 2.0));
-    objets.push_back( new Sphere(Vec(3.0, 0.0, -20.0), Vec(250.0, 250.0, 250.0), 0.5, 0.0, 2.0));
+
+    objets.push_back( new Sphere(Vec(3.0, 0.0, -20.0), rouge, 0.9, 0.0, 2.0));
+    objets.push_back( new Sphere(Vec(0.0, 0.0, -25.0), vert, 0.9, 0.0, 2.0));
+    objets.push_back( new Sphere(Vec(-3.0, 0.0, -20.0), bleu, 0.9, 0.0, 2.0));
+    objets.push_back( new Sphere(Vec(0.0, 5.0, -20.0), Vec(255.0, 255.0, 255.0), 0.9, 0.0, 2.0));
     //objets.push_back( new Sphere(Vec(0.0, -100.5, 0.0), vert, 0.5, 0.0, 100.0));
-    objets.push_back( new Sphere(Vec(-3.0, 0.0, -20.0), Vec(255.0, 0.0, 150.0), 0.0, 0.0, 1.0));
+
+    //objets.push_back( new Sphere(Vec(-3.0, 10.0, -20.0), Vec(255.0, 0.0, 150.0), 0.0, 0.0, 1.0));
     //objets.push_back( new Plan(Vec(0.0, 0.0, -35.0), vert, 0.0, 0.0, Vec(3.0, 0.0, -5.0), Vec(0.0, 3.0, 0.0)));
     //objets.push_back( new Plan(Vec(0.0, 0.0, -35.0), bleu, 0.0, 0.0, Vec(-3.0, 0.0, -5.0), Vec(0.0, 3.0, 0.0)));
     //objets.push_back( new Plan(Vec(0.0, 0.0, -40.0), rouge, 0.0, 0.0, Vec(-5.0, 0.0, -5.0), Vec(0.0, 5.0, 0.0)));
     objets.push_back( new Plan(Vec(-5.0, -3.0, -15.0), vert, 0.0, 0.0, Vec(10, 0.0, 0.0), Vec(0.0, 0.0, -20.0)));
-    //objets.push_back( new Parallelepipede());
-    objets.push_back( new Parallelepipede(Vec(-7.0, 1.0,-15.0), rouge, 0.0, 0.0, Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2)).prod_vec(Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)))*0.25, Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)), Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2))));
+    //objets.push_back( new Plan);
+    //objets.push_back( new Parallelepipede(Vec(-4.0, 1.0,-15.0), rouge, 0.0, 0.0, Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2)).prod_vec(Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)))*0.25, Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)), Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2))));
 
     int fov = 90;
     rendu(objets, image_width, image_height, fov, "premier_test.ppm");
