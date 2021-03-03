@@ -107,16 +107,18 @@ public:
 	//On définit aisément une surface par son vecteur normal
 	Vec normalVector;
 
-	Plan() : Objet(), longueur(Vec(1, 0, 0)), largeur(Vec(0, 1, 0)), normalVector(Vec(0, 0, 1)) {}
+	Plan() : Objet(), longueur(Vec(1, 0, 0)), largeur(Vec(0, 1, 0)), normalVector(Vec(0, 0, -1)) {}
 
 	Plan(Vec lo, Vec la) : Objet(), longueur(lo), largeur(la){
 		normalVector = longueur.prod_vec(largeur);
 		normalVector.normalize();
+		//normalVector = -normalVector;
 	}
 
 	Plan(Vec pos, Vec col, double reflec, double transp, Vec lo, Vec la) : Objet(pos, col, reflec, transp),longueur(lo), largeur(la){
 		normalVector = longueur.prod_vec(largeur);
 		normalVector.normalize();
+		//normalVector = -normalVector;
 	}
 
 	/*Indique si un point du plan appartient au plan fini ou non
