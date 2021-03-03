@@ -50,7 +50,7 @@ Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets, int depth){
     if (closest_object->reflectivite > 0 && depth < max_depth) { 
         float facingratio = -rayon.direction.dot(normale); 
         // change the mix value to tweak the effect
-        float fresneleffect = mix(pow(1 - facingratio, 3), 1, 0.1); 
+        float fresneleffect = mix(pow(1 - facingratio, 3), 1, 0.1);
         //std :: cout << fresneleffect << std :: endl;
         // compute reflection direction (not need to normalize because all vectors
         // are already normalized)
