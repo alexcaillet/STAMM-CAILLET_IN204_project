@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
 #include <memory>
@@ -81,6 +82,13 @@ Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets, int depth){
     else{
         pixel_color = closest_object->couleur ;//abs(normale.dot(rayon.direction));
     }
+
+    //eclaircissement de l'image temporaire
+    double facteur_eclaircissement = 1.5;
+    pixel_color.x = std::min(255.0, pixel_color.x*1.5);
+    pixel_color.y = std::min(255.0, pixel_color.y*1.5);
+    pixel_color.z = std::min(255.0, pixel_color.z*1.5);
+
 
     return pixel_color; //*abs(normale.dot(rayon.direction));
 }
