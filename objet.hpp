@@ -107,7 +107,7 @@ public:
 	//On définit aisément une surface par son vecteur normal
 	Vec normalVector;
 
-	Plan() : Objet(), longueur(Vec(1, 0, 0)), largeur(Vec(0, 1, 0)), normalVector(Vec(0, 0, -1)) {}
+	Plan() : Objet(), longueur(Vec(1, 0, 0)), largeur(Vec(0, 1, 0)), normalVector(Vec(0, 0, 1)) {}
 
 	Plan(Vec lo, Vec la) : Objet(), longueur(lo), largeur(la){
 		normalVector = longueur.prod_vec(largeur);
@@ -255,5 +255,69 @@ public:
 		return faces[i]->normalVector;
 	}
 };
+
+class Disque : public virtual Objet
+{
+public:
+	Vec rayon;
+	Vec normalVector;
+
+	Disque() : Objet(), rayon(Vec(1, 0, 0)), normalVector(Vec(0, 1, 0)) {}
+
+	Disque(Vec ray, Vec normale) : Objet(), rayon(ray), normalVector(normale){
+		normalVector.normalize();
+	}
+
+	Disque(Vec pos, Vec col, double reflec, double transp, Vec ray, Vec normale) : Objet(pos, col, reflec, transp),rayon(ray), normalVector(normale){
+		normalVector.normalize();
+	}
+
+	/*Indique si un point du plan appartient au plan fini ou non
+	*/
+	bool belong_to(Vec point){
+		Vec point_loc = point - position;
+		if (point_loc.norme()<=rayon.norme()){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
+	/*Calcul s'il y a une intersection du rayon avec le plan
+	La direction du rayon est un vecteur unitaire
+	*/
+	virtual bool intersect(Ray rayon, double* t, Vec* normale)
+	{
+		auto d = -normalVector.dot(position);
+		if (normalVector.dot(rayon.direction) != 0)
+		{
+			//Il existe un point d'intersection avec le plan
+			auto t1 = -(normalVector.dot(rayon.origine) + d) / normalVector.dot(rayon.direction);
+			
+			if (t1 <= 0)
+				return false;
+
+			//Vérifions que ce point appartient au plan fini
+			Vec intersection = rayon.origine + rayon.direction * t1;
+			
+			if (belong_to(intersection))
+			{
+				*t = t1;
+				*normale = normalVector;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/*Retourne la normale à la surface au point d'intersection*/
+	virtual Vec normale(Vec point_intersection)
+	{
+		return normalVector;
+	}
+};
+
+
 
 #endif

@@ -23,7 +23,7 @@ float mix(const float &a, const float &b, const float &mix)
     return b * mix + a * (1 - mix); 
 } 
 
-#define max_depth 5
+#define max_depth 3
 /*Calcul de la couleur d'un pixel sur l'image*/
 Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets, int depth){
     //On commence par chercher s'il y a un point d'intersection entre le rayon et un des objets de la scène
@@ -56,10 +56,6 @@ Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets, int depth){
     //pour contrer l'"acnée de reflexion"
     float bias = 1e-4;
     if (closest_object->reflectivite > 0 && depth < max_depth) { 
-        /*
-        if(closest_object_index==2 && depth>0){
-            std::cout << depth << std::endl;
-        }*/
         
         /*if (depth >0){
         std :: cout << "reflexion de profondeur " << depth << std :: endl;}*/
@@ -73,8 +69,7 @@ Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets, int depth){
         reflecdir.normalize(); 
         Ray new_rayon(point_intersection-normale*bias, reflecdir);
         depth++;
-        Vec reflection = calcul_pixel(new_rayon, objets, depth);
-        //std::cout << reflection.x << " " << reflection.y << " " << reflection.z << std::endl; 
+        Vec reflection = calcul_pixel(new_rayon, objets, depth); 
 
         pixel_color =  closest_object->couleur*(1-closest_object->reflectivite) + reflection * fresneleffect * closest_object->reflectivite;
     }
@@ -84,10 +79,10 @@ Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets, int depth){
     }
 
     //eclaircissement de l'image temporaire
-    double facteur_eclaircissement = 1.5;
-    pixel_color.x = std::min(255.0, pixel_color.x*1.5);
-    pixel_color.y = std::min(255.0, pixel_color.y*1.5);
-    pixel_color.z = std::min(255.0, pixel_color.z*1.5);
+    double facteur_eclaircissement = 1.7;
+    pixel_color.x = std::min(255.0, pixel_color.x*facteur_eclaircissement);
+    pixel_color.y = std::min(255.0, pixel_color.y*facteur_eclaircissement);
+    pixel_color.z = std::min(255.0, pixel_color.z*facteur_eclaircissement);
 
 
     return pixel_color; //*abs(normale.dot(rayon.direction));
@@ -102,7 +97,7 @@ void rendu(std::vector<Objet *> objets, int image_width, int image_height, int f
     double viewport_width = aspect_ratio * viewport_height;
     double focal_length = viewport_width/tan(PI*fov/180*0.5);
 
-    Vec origine(0.0, 0.0, 0.0);
+    Vec origine(0.0, 0.0, 10.0);
     Vec largeur(viewport_width, 0.0, 0.0);
     Vec hauteur(0.0, viewport_height, 0.0);
     Vec coin_haut_gauche = origine - largeur*0.5 + hauteur*0.5 - Vec(0.0, 0.0, focal_length);
@@ -165,7 +160,7 @@ int main()
     //objets.push_back( new Sphere(Vec(-1.5, 0.0, -20.0), Vec(0.0, 0.0, 255.0), 0.0, 0.0, 2.0));
 
     //objets.push_back( new Sphere(Vec(3.0, 0.0, -20.0), rouge, 0.9, 0.0, 2.0));
-    //objets.push_back( new Sphere(Vec(0.0, 0.0, -25.0), vert, 0.9, 0.0, 2.0));
+    objets.push_back( new Sphere(Vec(0.0, 0.0, -25.0), vert, 0.9, 0.0, 2.0));
     objets.push_back( new Sphere(Vec(3.0, 5.0, -20.0), bleu, 0.9, 0.0, 2.0));
     //objets.push_back( new Sphere(Vec(0.0, 5.0, -20.0), Vec(255.0, 255.0, 255.0), 0.9, 0.0, 2.0));
 
@@ -175,9 +170,12 @@ int main()
     //objets.push_back( new Plan(Vec(0.0, 0.0, -35.0), vert, 0.0, 0.0, Vec(3.0, 0.0, -5.0), Vec(0.0, 3.0, 0.0)));
     //objets.push_back( new Plan(Vec(0.0, 0.0, -35.0), bleu, 0.0, 0.0, Vec(-3.0, 0.0, -5.0), Vec(0.0, 3.0, 0.0)));
     objets.push_back( new Plan(Vec(-10.0, 0.0, -40.0), rouge, 0.9, 0.0, Vec(15.0, 0.0, 5.0), Vec(0.0, 5.0, 0.0)));
-    objets.push_back( new Plan(Vec(-8.0, -3.0, -12.0), vert, 0.9, 0.0, Vec(15, 0.0, 0.0), Vec(0.0, 0.0, -20.0)));
+    objets.push_back( new Plan(Vec(-8.0, -3.0, 0.0), vert, 0.9, 0.0, Vec(15, 0.0, 0.0), Vec(0.0, 0.0, -25.0)));
     //objets.push_back( new Plan);
-    objets.push_back( new Parallelepipede(Vec(-4.0, 1.0,-15.0), rouge, 0.8, 0.0, Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2)).prod_vec(Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)))*0.25, Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)), Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2))));
+    objets.push_back( new Parallelepipede(Vec(-3.0, 2.0,-15.0), rouge, 0.8, 0.0, Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2)).prod_vec(Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)))*0.25, Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)), Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2))));
+    objets.push_back( new Disque(Vec(3.0, 0.0, -25.0), rouge, 0.9, 0.0, Vec(1, 0.0, 0.0), Vec(1.0, 0.0, -1.0)));
+    objets.push_back( new Plan(Vec(3.0, 0.0, -25.0), rouge, 0.9, 0.0, Vec(2.0, 0.0, 2.0), Vec(0.0, 2.0, 0.0)));
+
 
     int fov = 90;
     rendu(objets, image_width, image_height, fov, "premier_test.ppm");
