@@ -15,6 +15,7 @@
 #define bleu Vec(0, 0.0, 255.0)
 #define vert Vec(0, 255.0, 0.0)
 #define gris Vec(50.0, 50.0, 50.0)
+#define grisclair Vec(200,200,200)
 #define blanc Vec(255, 255, 255)
 #define noir Vec(0,0,0)
 
@@ -23,7 +24,7 @@ float mix(const float &a, const float &b, const float &mix)
     return b * mix + a * (1 - mix); 
 } 
 
-#define max_depth 3
+#define max_depth 10
 /*Calcul de la couleur d'un pixel sur l'image*/
 Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets, int depth){
     //On commence par chercher s'il y a un point d'intersection entre le rayon et un des objets de la scène
@@ -40,23 +41,25 @@ Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets, int depth){
         }
     }
 
-    if(rayon.direction.dot(normale)<0){
-        normale = -normale;
-    }
+
 
     //si pas d'objet sur le parcours du rayon, on renvoie la couleur d'arrière-plan
     if(closest_object_index == -1){
-        return gris;
+        return grisclair;
     }
 
     Objet *closest_object = objets[closest_object_index]; 
     Vec point_intersection = rayon.origine + rayon.direction*tmin;
-    Vec pixel_color;
+    Vec pixel_color(0,0,0);
 
     //pour contrer l'"acnée de reflexion"
     float bias = 1e-4;
-    if (closest_object->reflectivite > 0 && depth < max_depth) { 
+    if ((closest_object->transparence > 0 || closest_object->reflectivite > 0) && depth < max_depth) { 
         
+        if(rayon.direction.dot(normale)<0){
+            normale = -normale;
+        }
+
         /*if (depth >0){
         std :: cout << "reflexion de profondeur " << depth << std :: endl;}*/
         float facingratio = rayon.direction.dot(normale); 
@@ -67,11 +70,30 @@ Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets, int depth){
         // are already normalized)
         Vec reflecdir = rayon.direction - normale * 2 * rayon.direction.dot(normale); 
         reflecdir.normalize(); 
-        Ray new_rayon(point_intersection-normale*bias, reflecdir);
-        depth++;
-        Vec reflection = calcul_pixel(new_rayon, objets, depth); 
+        Ray new_reflec_rayon(point_intersection-normale*bias, reflecdir);
+        Vec reflection = calcul_pixel(new_reflec_rayon, objets, depth+1); 
 
-        pixel_color =  closest_object->couleur*(1-closest_object->reflectivite) + reflection * fresneleffect * closest_object->reflectivite;
+        if (closest_object->reflectivite > 0)
+            pixel_color +=  (closest_object->couleur*(1-closest_object->reflectivite) + reflection * closest_object->reflectivite)*fresneleffect;
+        
+        if (closest_object->transparence > 0)
+        {
+            bool inside = false;
+            normale = - normale;
+            if(rayon.direction.dot(normale)>0){
+                normale = -normale;
+                inside = true;
+            }
+
+            float ior = 1.1, eta = (inside) ? ior : 1 / ior;
+            float cosi = -normale.dot(rayon.direction); 
+            float k = 1 - eta * eta * (1 - cosi * cosi); 
+            Vec refracdir = rayon.direction * eta + normale * (eta *  cosi - sqrt(k)); 
+            refracdir.normalize();
+            Ray new_refrac_rayon(point_intersection-normale*bias, refracdir);
+            Vec refraction = calcul_pixel(new_refrac_rayon, objets, depth+1);
+            pixel_color += (refraction * closest_object->transparence + closest_object->couleur*(1-closest_object->transparence))* (1 - fresneleffect) ;
+        }
     }
 
     else{
@@ -80,9 +102,9 @@ Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets, int depth){
 
     //eclaircissement de l'image temporaire
     double facteur_eclaircissement = 1.7;
-    pixel_color.x = std::min(255.0, pixel_color.x*facteur_eclaircissement);
-    pixel_color.y = std::min(255.0, pixel_color.y*facteur_eclaircissement);
-    pixel_color.z = std::min(255.0, pixel_color.z*facteur_eclaircissement);
+    //pixel_color.x = std::min(255.0, pixel_color.x*facteur_eclaircissement);
+    //pixel_color.y = std::min(255.0, pixel_color.y*facteur_eclaircissement);
+    //pixel_color.z = std::min(255.0, pixel_color.z*facteur_eclaircissement);
 
 
     return pixel_color; //*abs(normale.dot(rayon.direction));
@@ -159,22 +181,22 @@ int main()
     std::vector<Objet *> objets;
     //objets.push_back( new Sphere(Vec(-1.5, 0.0, -20.0), Vec(0.0, 0.0, 255.0), 0.0, 0.0, 2.0));
 
-    //objets.push_back( new Sphere(Vec(3.0, 0.0, -20.0), rouge, 0.9, 0.0, 2.0));
-    objets.push_back( new Sphere(Vec(0.0, 0.0, -25.0), vert, 0.9, 0.0, 2.0));
-    objets.push_back( new Sphere(Vec(3.0, 5.0, -20.0), bleu, 0.9, 0.0, 2.0));
-    //objets.push_back( new Sphere(Vec(0.0, 5.0, -20.0), Vec(255.0, 255.0, 255.0), 0.9, 0.0, 2.0));
+    objets.push_back( new Sphere(Vec(-3.0, 0.0, -20.0), rouge, 0.5, 0.5, 2.0));
+    objets.push_back( new Sphere(Vec(3.0, -1.0, -5.0), Vec(255,0,187), 0.5, 0.5, 0.5));
+    objets.push_back( new Sphere(Vec(1.0, 2, -35.0), bleu, 0.5, 0.5, 2.0));
+    //objets.push_back( new Sphere(Vec(0.0, 5, -20.0), blanc, 0.5, 0.5, 2.0));
 
     //objets.push_back( new Sphere(Vec(0.0, -100.5, 0.0), vert, 0.5, 0.0, 100.0));
 
     //objets.push_back( new Sphere(Vec(-3.0, 10.0, -20.0), Vec(255.0, 0.0, 150.0), 0.0, 0.0, 1.0));
-    //objets.push_back( new Plan(Vec(0.0, 0.0, -35.0), vert, 0.0, 0.0, Vec(3.0, 0.0, -5.0), Vec(0.0, 3.0, 0.0)));
+    //objets.push_back( new Plan(Vec(0.0, 1.0, -35.0), vert, 0.0, 0.0, Vec(3.0, 0.0, -5.0), Vec(0.0, 3.0, 0.0)));
     //objets.push_back( new Plan(Vec(0.0, 0.0, -35.0), bleu, 0.0, 0.0, Vec(-3.0, 0.0, -5.0), Vec(0.0, 3.0, 0.0)));
-    objets.push_back( new Plan(Vec(-10.0, 0.0, -40.0), rouge, 0.9, 0.0, Vec(15.0, 0.0, 5.0), Vec(0.0, 5.0, 0.0)));
-    objets.push_back( new Plan(Vec(-8.0, -3.0, 0.0), vert, 0.9, 0.0, Vec(15, 0.0, 0.0), Vec(0.0, 0.0, -25.0)));
+    objets.push_back( new Plan(Vec(0.0, -2.0, -30.0), vert, 0.5, 0.5, Vec(15.0, 0.0, 10.0), Vec(0.0, 5.0, 0.0)));
+    objets.push_back( new Plan(Vec(-8.0, -3.0, -2.0), vert, 0.5, 0.5, Vec(15, 0.0, 0.0), Vec(0.0, 0.0, -25.0)));
     //objets.push_back( new Plan);
-    objets.push_back( new Parallelepipede(Vec(-3.0, 2.0,-15.0), rouge, 0.8, 0.0, Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2)).prod_vec(Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)))*0.25, Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)), Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2))));
-    objets.push_back( new Disque(Vec(3.0, 0.0, -25.0), rouge, 0.9, 0.0, Vec(1, 0.0, 0.0), Vec(1.0, 0.0, -1.0)));
-    objets.push_back( new Plan(Vec(3.0, 0.0, -25.0), rouge, 0.9, 0.0, Vec(2.0, 0.0, 2.0), Vec(0.0, 2.0, 0.0)));
+    objets.push_back( new Parallelepipede(Vec(-4.0, 2.0,-5.0), bleu, 0.2, 0.8, Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2)).prod_vec(Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)))*0.25, Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)), Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2))));
+    //objets.push_back( new Disque(Vec(3.0, 0.0, -25.0), rouge, 0.9, 0.0, Vec(1, 0.0, 0.0), Vec(1.0, 0.0, -1.0)));
+    //objets.push_back( new Plan(Vec(3.0, 0.0, -25.0), rouge, 0.0, 0.0, Vec(2.0, 0.0, 2.0), Vec(0.0, 2.0, 0.0)));
 
 
     int fov = 90;
