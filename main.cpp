@@ -3,6 +3,10 @@
 #include <stdbool.h>
 #include <math.h>
 #include <memory>
+#include <random>
+#include <omp.h>
+#include <chrono>
+
 #include "vecteur.hpp"
 #include "image.hpp"
 #include "objet.hpp"
@@ -23,7 +27,13 @@
 float mix(const float &a, const float &b, const float &mix) 
 { 
     return b * mix + a * (1 - mix); 
-} 
+}
+
+inline double random_double() {
+    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    static std::mt19937 generator;
+    return distribution(generator);
+}
 
 #define max_depth 10
 /*Calcul de la couleur d'un pixel sur l'image*/
@@ -113,17 +123,36 @@ Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets, int depth){
 void rendu(std::vector<Objet *> objets, int image_width, int image_height, int fov, const std::string &filename){
     Picture scene(image_width, image_height);
 
-    Camera camera(image_width, image_height, fov);
+    //Camera camera(Vec(1, 0, -50), Vec(0, 0, -1));
 
+    Camera camera(image_width, image_height, 90);
+
+    int sample_per_pixel = 10; //pour l'anti-aliasing
+
+    auto start = std::chrono::system_clock::now();
+
+    int i;
+    int j;
+    #pragma omp parallel for schedule(dynamic) private(i, j)
     //calcul des pixels
-    for(int j=0; j<image_height; j++){
-        for(int i=0; i<image_width; i++){
-            double u = i/(double)(image_width-1);
-            double v = j/(double)(image_height-1);
-            Ray rayon_incident = camera.getRay(u,v);
-            scene.pixels[j*image_width + i] = calcul_pixel(rayon_incident, objets,0);
+    for(j=0; j<image_height; j++){
+        //std::cerr << "\rScanlines remaining: " << image_height-1-j << ' ' << std::flush;
+        for(i=0; i<image_width; i++){
+            Vec pixel_color = Vec();
+            for(int s=0; s<sample_per_pixel; s++){
+                double u = (i+random_double())/(double)(image_width-1);
+                double v = (j+random_double())/(double)(image_height-1);
+                Ray rayon_incident = camera.getRay(u,v);
+                pixel_color += calcul_pixel(rayon_incident, objets,0);
+            }
+            //scene.pixels[j*image_width + i] = calcul_pixel(rayon_incident, objets,0);
+            scene.pixels[j*image_width + i] = pixel_color * (1.0/sample_per_pixel);
         }
     }
+    
+    std::chrono::duration<double> temps_calcul = std::chrono::system_clock::now()-start;
+    std::cout << "Temps de calcul : " << temps_calcul.count() << "s\n";
+
     scene.savePicture("test_savePicture.png", 2);
 }
 
@@ -184,11 +213,11 @@ int main()
     //objets.push_back( new Plan(Vec(0.0, 0.0, -25.0), rouge, 0.9, 0.9, Vec(0.0, 2.0, -2.0), Vec(2.0, 0.0, 0.0)));
 
 
-    //objets.push_back( new Parallelepipede(Vec(-4.0, 2.0,-5.0), bleu, 0.2, 0.8, Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2)).prod_vec(Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)))*0.25, Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)), Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2))));
+    objets.push_back( new Parallelepipede(Vec(3.0, 2.0,-20.0), bleu, 0.2, 0.8, Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2)).prod_vec(Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)))*0.25, Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)), Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2))));
     
-    objets.push_back( new Disque(Vec(-3.0, 2.0, -25.0), rouge, 0.9, 0.2, 3.0, Vec(1.0, 0, 0.2)));
+    //objets.push_back( new Disque(Vec(-3.0, 2.0, -25.0), rouge, 0.9, 0.2, 3.0, Vec(1.0, 0, 0.2)));
 
-    objets.push_back( new Cylindre(Disque(Vec(2, 1, -25), bleu, 0.5, 0.01, 3.0, Vec(0.0, -1.0, -1.0)), 3.0));
+    //objets.push_back( new Cylindre(Disque(Vec(2, 1, -25), bleu, 0.5, 0.01, 3.0, Vec(0.0, -1.0, -1.0)), 3.0));
     //objets.push_back( new Cylindre(Disque(Vec(-3, 1, -25), bleu, 0.5, 0.0, 1.0, Vec(-1.0, 0.0, 0.0)), 5.0));
 
     //objets.push_back( new Cylindre(Disque(Vec(0, 0, -25), bleu, 0.7, 0.5, Vec(3.0, 0.0, 0.0), Vec(0.0, -1.0, 0.0)), 3.0));

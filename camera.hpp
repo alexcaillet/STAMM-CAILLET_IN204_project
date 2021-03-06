@@ -49,13 +49,19 @@ class Camera{
             coin_haut_gauche = origine - largeur*0.5 + hauteur*0.5 - Vec(0.0, 0.0, focal_length);
         }
 
-        /*
+        
         Camera(Vec position, Vec direction): aspect_ratio(16.0/9.0), fov(80) {
             double viewport_width = aspect_ratio * viewport_height;
             double focal_length = viewport_width/tan(PI*fov/180*0.5);
+            direction.normalize();
             origine = position;
+            hauteur = Vec(0.0, viewport_height, 0.0);
+            largeur = -hauteur.prod_vec(direction);
+            largeur.normalize();
+            largeur = largeur * viewport_width;
 
-        }*/
+            coin_haut_gauche = origine - largeur*0.5 + hauteur*0.5 + direction*focal_length;
+        }
 
         Ray getRay(double u, double v){
             Vec dir = coin_haut_gauche+largeur*u-hauteur*v-origine;
