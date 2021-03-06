@@ -10,20 +10,20 @@ CONFIG += c++11
 
 SOURCES += \
     ../image.cpp \
-    ../xmlread.cpp \
+    ../moteur_rendu.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     ../camera.hpp \
     ../image.hpp \
+    ../moteur_rendu.hpp \
     ../objet.hpp \
     ../ray.hpp \
     ../vecteur.hpp \
     mainwindow.h
 
-FORMS += \
-    mainwindow.ui
+FORMS +=
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

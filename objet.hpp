@@ -5,6 +5,7 @@
 #include "ray.hpp"
 #include <stdbool.h>
 #include <cmath>
+#include <vector>
 
 #define INFINI 1e8
 
