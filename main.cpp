@@ -7,6 +7,7 @@
 #include "image.hpp"
 #include "objet.hpp"
 #include "ray.hpp"
+#include "camera.hpp"
 
 #define PI 3.141592653589793
 #define INFINI 1e8
@@ -112,25 +113,14 @@ Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets, int depth){
 void rendu(std::vector<Objet *> objets, int image_width, int image_height, int fov, const std::string &filename){
     Picture scene(image_width, image_height);
 
-    //camera
-    double aspect_ratio = (double)image_width/(double)image_height;
-    double viewport_height = 2.0;
-    double viewport_width = aspect_ratio * viewport_height;
-    double focal_length = viewport_width/tan(PI*fov/180*0.5);
-
-    Vec origine(0.0, 0.0, 0.0);
-    Vec largeur(viewport_width, 0.0, 0.0);
-    Vec hauteur(0.0, viewport_height, 0.0);
-    Vec coin_haut_gauche = origine - largeur*0.5 + hauteur*0.5 - Vec(0.0, 0.0, focal_length);
+    Camera camera(image_width, image_height, fov);
 
     //calcul des pixels
     for(int j=0; j<image_height; j++){
         for(int i=0; i<image_width; i++){
             double u = i/(double)(image_width-1);
             double v = j/(double)(image_height-1);
-            Vec dir = coin_haut_gauche+largeur*u-hauteur*v-origine;
-            dir.normalize();
-            Ray rayon_incident(origine, dir);
+            Ray rayon_incident = camera.getRay(u,v);
             scene.pixels[j*image_width + i] = calcul_pixel(rayon_incident, objets,0);
         }
     }
