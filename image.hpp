@@ -1,12 +1,14 @@
 #ifndef IMAGE_HPP
 #define IMAGE_HPP
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
+
 
 #include <fstream>
 #include <vector>
 #include "vecteur.hpp"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb-master/stb_image_write.h"
+
 
 class Picture
 {
@@ -38,7 +40,7 @@ class Picture
             savePicturePNG(filename);
             break;
         default:
-            std::cerr << "Erreur : le format demandé est incorrect. Choisissez ppm, jpeg ou png \n";
+            std::cerr << "Erreur : le format demandé est incorrect. Choisissez ppm(0), jpeg(1) ou png(2) \n";
             break;
         }
     }
