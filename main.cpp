@@ -161,11 +161,7 @@ void rendu(std::vector<Objet *> objets, int image_width, int image_height, int f
 
 
 int main()
-{
-
-    //Test de la classe image
-    // Image
-    
+{    
     //const int image_width = 640;
     //const int image_height = 360;
 
@@ -175,28 +171,6 @@ int main()
     //16K
     //const int image_width = 15360;
     //const int image_height = 8640;
-
-
-
-    /*Picture image(image_width, image_height);
-    // Render
-    for (int j = 0; j<image_height; ++j)
-    {
-        std::cerr << "\rScanlines remaining: " << image_height-j << ' ' << std::flush;
-        for (int i = 0; i < image_width; ++i)
-        {
-            auto r = double(i) / (image_width - 1);
-            auto g = double(j) / (image_height - 1);
-            auto b = 0.25;
-
-            image.pixels[i + j*image_width].x = static_cast<int>(255.999 * r);
-            image.pixels[i + j*image_width].y = static_cast<int>(255.999 * g);
-            image.pixels[i + j*image_width].z = static_cast<int>(255.999 * b);
-
-        }
-    }
-    image.savePicture("image.ppm");
-    std::cerr << "\nDone.\n";*/
 
     //ajout d'objets
     std::vector<Objet *> objets;
@@ -231,6 +205,4 @@ int main()
     for(unsigned int i=0; i<objets.size(); i++){
         delete objets[i];
     }
-
-    //fin du test
 }
