@@ -171,7 +171,7 @@ public:
                     pixel_color += calcul_pixel(rayon_incident, objets, 0);
                 }
                 //scene.pixels[j*image_width + i] = calcul_pixel(rayon_incident, objets,0);
-                scene.pixels[j * image_width + i] = pixel_color * (1.0 / sample_per_pixel)*255;
+                scene.pixels[j * image_width + i] = pixel_color * (1.0 / sample_per_pixel);
             }
         }
 
