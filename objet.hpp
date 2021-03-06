@@ -18,7 +18,7 @@ public:
 	double reflectivite;
 	double transparence;
 
-	Objet() : position(Vec(0, 0, -35.0)), couleur(Vec(255.0, 0.0, 0.0)), reflectivite(0.5), transparence(0.5)
+	Objet() : position(Vec(0, 0, -25.0)), couleur(Vec(255.0, 0.0, 0.0)), reflectivite(0.5), transparence(0.5)
 	{
 	}
 
@@ -267,17 +267,17 @@ public:
 class Disque : public virtual Objet
 {
 public:
-	Vec rayon;
+	double rayon;
 	Vec normalVector;
 
-	Disque() : Objet(), rayon(Vec(1, 0, 0)), normalVector(Vec(0, 1, 0)) {}
+	Disque() : Objet(), rayon(1.0), normalVector(Vec(0, 1, 0)) {}
 
-	Disque(Vec ray, Vec normale) : Objet(), rayon(ray), normalVector(normale)
+	Disque(double r, Vec normale) : Objet(), rayon(r), normalVector(normale)
 	{
 		normalVector.normalize();
 	}
 
-	Disque(Vec pos, Vec col, double reflec, double transp, Vec ray, Vec normale) : Objet(pos, col, reflec, transp), rayon(ray), normalVector(normale)
+	Disque(Vec pos, Vec col, double reflec, double transp, double r, Vec normale) : Objet(pos, col, reflec, transp), rayon(r), normalVector(normale)
 	{
 		normalVector.normalize();
 	}
@@ -290,7 +290,7 @@ public:
 	bool belong_to(Vec point)
 	{
 		Vec point_loc = point - position;
-		if (point_loc.norme() <= rayon.norme())
+		if (point_loc.norme() <= rayon)
 		{
 			return true;
 		}
@@ -303,19 +303,19 @@ public:
 	/*Calcul s'il y a une intersection du rayon avec le plan
 	La direction du rayon est un vecteur unitaire
 	*/
-	virtual bool intersect(Ray rayon, double *t, Vec *normale)
+	virtual bool intersect(Ray ray, double *t, Vec *normale)
 	{
 		auto d = -normalVector.dot(position);
-		if (normalVector.dot(rayon.direction) != 0)
+		if (normalVector.dot(ray.direction) != 0)
 		{
 			//Il existe un point d'intersection avec le plan
-			auto t1 = -(normalVector.dot(rayon.origine) + d) / normalVector.dot(rayon.direction);
+			auto t1 = -(normalVector.dot(ray.origine) + d) / normalVector.dot(ray.direction);
 
 			if (t1 <= 0)
 				return false;
 
 			//Vérifions que ce point appartient au plan fini
-			Vec intersection = rayon.origine + rayon.direction * t1;
+			Vec intersection = ray.origine + ray.direction * t1;
 
 			if (belong_to(intersection))
 			{
@@ -358,18 +358,24 @@ public:
 		
 		//On cherche s'il existe un point d'intersection sur une des faces du cylindre
 		Disque dessus_cylindre = Disque(base, base.position + hauteur);
+		dessus_cylindre.normalVector = -dessus_cylindre.normalVector;
 		dessus_cylindre.intersect(rayon, &(t_temp[0]), &(normales[0]));
 		base.intersect(rayon, &(t_temp[1]), &(normales[1]));
-		
+
 		//On cherche s'il existe un point d'intersection sur le bord du cylindre
 		Vec normale_cylindre = -base.normalVector;
 		normale_cylindre.normalize(); //au cas où
 
 		Vec A = rayon.origine-position;
 		//On considère que la direction du rayon est normalisée
-		double a = 1 - (normale_cylindre.dot(rayon.direction))*(normale_cylindre.dot(rayon.direction));
-		double b = 2*A.dot(rayon.direction) + 2 * (normale_cylindre.dot(rayon.direction))*(normale_cylindre.dot(A));
-		double c = A.norme2() - (normale_cylindre.dot(A))*(normale_cylindre.dot(A)) - base.rayon.norme2();
+		double a = 1 - normale_cylindre.dot(rayon.direction)*normale_cylindre.dot(rayon.direction);
+		double b = 2*A.dot(rayon.direction) - 2 * normale_cylindre.dot(rayon.direction)*normale_cylindre.dot(A);
+		double c = A.norme2() - normale_cylindre.dot(A)*normale_cylindre.dot(A) - base.rayon*base.rayon;
+
+		/*
+		double a = 1 - normale_cylindre.dot(rayon.direction)*normale_cylindre.dot(rayon.direction);
+		double b = -2*position.dot(rayon.direction) + 2 * normale_cylindre.dot(rayon.direction) * normale_cylindre.dot(position);
+		double c = position.norme2() - normale_cylindre.dot(position)*normale_cylindre.dot(position) - base.rayon*base.rayon;*/
 
 		double delta = b * b - a * c * 4.0;
 
@@ -382,19 +388,20 @@ public:
 			{
 				if(t1>=0){
 					//std::cout << "yo \n";
-					double t_loc = std::min(t1, t2);
+					double tloc = std::min(t1, t2);
 
 					//Vérifions que le point appartient au cylindre de hauteur finie
-					Vec point_intersection_local = rayon.origine + rayon.direction*t_loc - position;
+					Vec point_intersection_local = rayon.origine + rayon.direction*tloc - position;
 					double projection_axe_cylindre = point_intersection_local.dot(normale_cylindre);
 					if(projection_axe_cylindre<=hauteur.norme() && projection_axe_cylindre>=0) //Le point appartient bien au cylindre de hauteur finie
-					{
-						t_temp[2] = t_loc;
+					{	
+						t_temp[2] = tloc;
 						normales[2] = point_intersection_local - normale_cylindre*projection_axe_cylindre;
 					}
 				}
 			}
 		}
+
 		//On cherche le premier point d'intersection
 		double tmin = INFINI;
 		unsigned int ind_min;

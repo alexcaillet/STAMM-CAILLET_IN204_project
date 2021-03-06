@@ -106,7 +106,6 @@ Vec calcul_pixel(Ray rayon, std::vector<Objet*>& objets, int depth){
     //pixel_color.y = std::min(255.0, pixel_color.y*facteur_eclaircissement);
     //pixel_color.z = std::min(255.0, pixel_color.z*facteur_eclaircissement);
 
-
     return pixel_color; //*abs(normale.dot(rayon.direction));
 }
 
@@ -180,33 +179,29 @@ int main()
     //ajout d'objets
     std::vector<Objet *> objets;
     //objets.push_back( new Sphere(Vec(-1.5, 0.0, -20.0), Vec(0.0, 0.0, 255.0), 0.0, 0.0, 2.0));
-
-    objets.push_back( new Sphere(Vec(-3.0, 0.0, -20.0), rouge, 0.5, 0.5, 2.0));
-    objets.push_back( new Sphere(Vec(3.0, -1.0, -5.0), Vec(255,0,187), 0.5, 0.5, 0.5));
-    objets.push_back( new Sphere(Vec(1.0, 2, -35.0), bleu, 0.5, 0.5, 2.0));
+    //objets.push_back( new Sphere(Vec(-3.0, 0.0, -20.0), rouge, 0.5, 0.5, 2.0));
+    //objets.push_back( new Sphere(Vec(3.0, -1.0, -5.0), Vec(255,0,187), 0.5, 0.5, 0.5));
+    //objets.push_back( new Sphere(Vec(1.0, 2, -35.0), bleu, 0.5, 0.5, 2.0));
     //objets.push_back( new Sphere(Vec(0.0, 5, -20.0), blanc, 0.5, 0.5, 2.0));
-
     //objets.push_back( new Sphere(Vec(0.0, -100.5, 0.0), vert, 0.5, 0.0, 100.0));
-
     //objets.push_back( new Sphere(Vec(-3.0, 10.0, -20.0), Vec(255.0, 0.0, 150.0), 0.0, 0.0, 1.0));
+
     //objets.push_back( new Plan(Vec(0.0, 1.0, -35.0), vert, 0.0, 0.0, Vec(3.0, 0.0, -5.0), Vec(0.0, 3.0, 0.0)));
     //objets.push_back( new Plan(Vec(0.0, 0.0, -35.0), bleu, 0.0, 0.0, Vec(-3.0, 0.0, -5.0), Vec(0.0, 3.0, 0.0)));
-    objets.push_back( new Plan(Vec(0.0, -2.0, -30.0), vert, 0.5, 0.5, Vec(15.0, 0.0, 10.0), Vec(0.0, 5.0, 0.0)));
+    objets.push_back( new Plan(Vec(0.0, -2.0, -30.0), Vec(0, 150, 150), 0.5, 0.5, Vec(15.0, 0.0, 10.0), Vec(0.0, 5.0, 0.0)));
     objets.push_back( new Plan(Vec(-8.0, -3.0, -2.0), vert, 0.5, 0.5, Vec(15, 0.0, 0.0), Vec(0.0, 0.0, -25.0)));
     //objets.push_back( new Plan);
-    objets.push_back( new Parallelepipede(Vec(-4.0, 2.0,-5.0), bleu, 0.2, 0.8, Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2)).prod_vec(Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)))*0.25, Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)), Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2))));
-    //objets.push_back( new Disque(Vec(3.0, 0.0, -25.0), rouge, 0.9, 0.0, Vec(1, 0.0, 0.0), Vec(1.0, 0.0, -1.0)));
-    //objets.push_back( new Plan(Vec(3.0, 0.0, -25.0), rouge, 0.0, 0.0, Vec(2.0, 0.0, 2.0), Vec(0.0, 2.0, 0.0)));
+    //objets.push_back( new Plan(Vec(0.0, 0.0, -25.0), rouge, 0.9, 0.9, Vec(0.0, 2.0, -2.0), Vec(2.0, 0.0, 0.0)));
 
 
-    /*Disque* base = new Disque(Vec(0, -3, -25), bleu, 0.3, 0.0, Vec(3.0, 0.0, 0.0), Vec(0.0, -1.0, 0.0));
-    Vec hauteur(0, 2, 0);
-    Disque* dessus = new Disque(*base, base->position+hauteur);
-    objets.push_back(base);
-    objets.push_back(dessus);*/
+    //objets.push_back( new Parallelepipede(Vec(-4.0, 2.0,-5.0), bleu, 0.2, 0.8, Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2)).prod_vec(Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)))*0.25, Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)), Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2))));
+    
+    objets.push_back( new Disque(Vec(-3.0, 2.0, -25.0), rouge, 0.9, 0.2, 3.0, Vec(1.0, 0, 0.2)));
 
-    objets.push_back( new Cylindre(Disque(Vec(0, 0, -25), bleu, 0.7, 0.0, Vec(3.0, 0.0, 0.0), Vec(0.0, -1.0, 1.0)), 3.0));
-    //objets.push_back( new Cylindre(Disque(Vec(0, 0, -25), bleu, 0.7, 0.0, Vec(3.0, 0.0, 0.0), Vec(0.0, -1.0, 0.0)), 3.0));
+    objets.push_back( new Cylindre(Disque(Vec(2, 1, -25), bleu, 0.5, 0.01, 3.0, Vec(0.0, -1.0, -1.0)), 3.0));
+    //objets.push_back( new Cylindre(Disque(Vec(-3, 1, -25), bleu, 0.5, 0.0, 1.0, Vec(-1.0, 0.0, 0.0)), 5.0));
+
+    //objets.push_back( new Cylindre(Disque(Vec(0, 0, -25), bleu, 0.7, 0.5, Vec(3.0, 0.0, 0.0), Vec(0.0, -1.0, 0.0)), 3.0));
     
 
     int fov = 90;
