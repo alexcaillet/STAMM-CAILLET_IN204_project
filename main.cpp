@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <math.h>
+#include <cmath>
 #include <memory>
 #include <random>
 #include <omp.h>
@@ -125,7 +125,9 @@ void rendu(std::vector<Objet *> objets, int image_width, int image_height, int f
 
     //Camera camera(Vec(1, 0, -50), Vec(0, 0, -1));
 
-    Camera camera(image_width, image_height, 90);
+    //Camera camera(image_width, image_height, 80);
+
+    Camera camera(Vec(0, 0, 35), Vec(0,0,-1), image_width, image_height, 80, 0);
 
     int sample_per_pixel = 10; //pour l'anti-aliasing
 
@@ -133,13 +135,14 @@ void rendu(std::vector<Objet *> objets, int image_width, int image_height, int f
 
     int i;
     int j;
-    #pragma omp parallel for schedule(dynamic) private(i, j)
+    int s;
     //calcul des pixels
     for(j=0; j<image_height; j++){
-        //std::cerr << "\rScanlines remaining: " << image_height-1-j << ' ' << std::flush;
+        std::cerr << "\rLignes restantes: " << image_height-1-j << ' ' << std::flush;
+        #pragma omp parallel for schedule(dynamic, 10) private(i, s)
         for(i=0; i<image_width; i++){
             Vec pixel_color = Vec();
-            for(int s=0; s<sample_per_pixel; s++){
+            for(s=0; s<sample_per_pixel; s++){
                 double u = (i+random_double())/(double)(image_width-1);
                 double v = (j+random_double())/(double)(image_height-1);
                 Ray rayon_incident = camera.getRay(u,v);
@@ -151,7 +154,7 @@ void rendu(std::vector<Objet *> objets, int image_width, int image_height, int f
     }
     
     std::chrono::duration<double> temps_calcul = std::chrono::system_clock::now()-start;
-    std::cout << "Temps de calcul : " << temps_calcul.count() << "s\n";
+    std::cout << std::endl << "Temps de calcul : " << temps_calcul.count() << "s\n";
 
     scene.savePicture("test_savePicture.png", 2);
 }
@@ -207,13 +210,13 @@ int main()
 
     //objets.push_back( new Plan(Vec(0.0, 1.0, -35.0), vert, 0.0, 0.0, Vec(3.0, 0.0, -5.0), Vec(0.0, 3.0, 0.0)));
     //objets.push_back( new Plan(Vec(0.0, 0.0, -35.0), bleu, 0.0, 0.0, Vec(-3.0, 0.0, -5.0), Vec(0.0, 3.0, 0.0)));
-    objets.push_back( new Plan(Vec(0.0, -2.0, -30.0), Vec(0, 150, 150), 0.5, 0.5, Vec(15.0, 0.0, 10.0), Vec(0.0, 5.0, 0.0)));
-    objets.push_back( new Plan(Vec(-8.0, -3.0, -2.0), vert, 0.5, 0.5, Vec(15, 0.0, 0.0), Vec(0.0, 0.0, -25.0)));
+    objets.push_back( new Plan(Vec(0.0, -2.0, -5.0), Vec(0, 150, 150), 0.0, 0.5, Vec(15.0, 0.0, 10.0), Vec(0.0, 5.0, 0.0)));
+    objets.push_back( new Plan(Vec(-8.0, -3.0, 22.0), vert, 0.5, 0.5, Vec(15, 0.0, 0.0), Vec(0.0, 0.0, -25.0)));
     //objets.push_back( new Plan);
     //objets.push_back( new Plan(Vec(0.0, 0.0, -25.0), rouge, 0.9, 0.9, Vec(0.0, 2.0, -2.0), Vec(2.0, 0.0, 0.0)));
 
 
-    objets.push_back( new Parallelepipede(Vec(3.0, 2.0,-20.0), bleu, 0.2, 0.8, Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2)).prod_vec(Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)))*0.25, Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)), Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2))));
+    objets.push_back( new Parallelepipede(Vec(3.0, 2.0, 10.0), bleu, 0.2, 0.01, Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2)).prod_vec(Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)))*0.25, Vec(-2.5*sqrt(2), -3.0, -2.5*sqrt(2)), Vec(2.5*sqrt(2), 0.0, -2.5*sqrt(2))));
     
     //objets.push_back( new Disque(Vec(-3.0, 2.0, -25.0), rouge, 0.9, 0.2, 3.0, Vec(1.0, 0, 0.2)));
 

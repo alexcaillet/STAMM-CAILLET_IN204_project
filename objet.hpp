@@ -4,7 +4,7 @@
 #include "vecteur.hpp"
 #include "ray.hpp"
 #include <stdbool.h>
-#include <math.h>
+#include <cmath>
 
 #define INFINI 1e8
 
@@ -18,7 +18,7 @@ public:
 	double reflectivite;
 	double transparence;
 
-	Objet() : position(Vec(0, 0, -25.0)), couleur(Vec(255.0, 0.0, 0.0)), reflectivite(0.5), transparence(0.5)
+	Objet() : position(Vec(0, 0, 0.0)), couleur(Vec(255.0, 0.0, 0.0)), reflectivite(0.5), transparence(0.5)
 	{
 	}
 
