@@ -170,8 +170,12 @@ public:
                     Ray rayon_incident = camera.getRay(u, v);
                     pixel_color += calcul_pixel(rayon_incident, objets, 0);
                 }
+                pixel_color= pixel_color * (1.0 / sample_per_pixel);
+                pixel_color.x = std :: min (double(255), pixel_color.x);
+                pixel_color.y = std :: min (double(255), pixel_color.y);
+                pixel_color.z = std :: min (double(255), pixel_color.z);
                 //scene.pixels[j*image_width + i] = calcul_pixel(rayon_incident, objets,0);
-                scene.pixels[j * image_width + i] = pixel_color * (1.0 / sample_per_pixel);
+                scene.pixels[j * image_width + i] = pixel_color;
             }
         }
 
