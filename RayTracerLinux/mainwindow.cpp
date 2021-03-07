@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
   // Create the button, make "this" the parent
-  select_button = new QPushButton("Choisi ta scène .xml", this);
+  select_button = new QPushButton("Choisis ta scène .xml", this);
   calcul_button = new QPushButton("Rendu", this);
   // set size and location of the button
   select_button->setGeometry(QRect(QPoint(0, 0), QSize(200, 50)));
