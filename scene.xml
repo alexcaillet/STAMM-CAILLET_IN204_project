@@ -1,52 +1,53 @@
 <scene>
-	<objects>
+	<objets>
 		
 		<sphere>
 			<position x="0" y="0" z="-20" />
-			<radius>4</radius>
-			<surfaceColor a="1" b="0.32" c="O.36" />
-			<emissionColor>0</emissionColor>
+			<rayon>4</rayon>
+			<couleur x="1" y="0.32" z="O.36" />
+			<emission>0</emission>
 			<re>1</re>
 			<tr>0.5</tr>
 		</sphere>
 
 		<sphere>
 			<position x="5" y="-1" z="-15" />
-			<radius>2</radius>
-			<surfaceColor a="0.90" b="0.76" c="0.46" />
-			<emissionColor>0</emissionColor>
+			<rayon>2</rayon>
+			<couleur x="0.90" y="0.76" z="0.46" />
+			<emission>0</emission>
 			<re>1</re>
 			<tr>0</tr>
 		</sphere>
 
 		<parallelepipede>
 			<position x="-5.5" y="0" z="-15" />
-			<surfaceColor a="100" b="0" c="0.80" />
+			<couleur x="100" y="0" z="0.80" />
 			<orientation x="10" y="420" z="420" />
 			<longueur> 10 </longueur>
 			<largeur> 10 </largeur>
 			<hauteur> 420 </hauteur>
-			<emissionColor>0</emissionColor>
+			<emission>0</emission>
 			<re>1</re>
 			<tr>0</tr>
 		</parallelepipede>
 
 		<plan>
 			<position x="-5.5" y="0" z="-15" />
-			<surfaceColor a="0.6" b="0" c="0.80" />
+			<couleur x="0.6" y="0" z="0.80" />
 			<normal x="1" y="0" z="0" />
 			<longueur> 10 </longueur>
 			<largeur> 10 </largeur>
-			<emissionColor>0</emissionColor>
+			<emission>0</emission>
 			<re>1</re>
 			<tr>0</tr>
 
 		</plan>
-
-
-
 		
-	</objects>
+	</objets>
+
+	<camera>
+		 
+	</camera>
 </scene>
 
 
