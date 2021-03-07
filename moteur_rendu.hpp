@@ -192,7 +192,6 @@ public:
                 pixel_color.x = std ::min(double(255), pixel_color.x);
                 pixel_color.y = std ::min(double(255), pixel_color.y);
                 pixel_color.z = std ::min(double(255), pixel_color.z);
-                //scene.pixels[j*image_width + i] = calcul_pixel(rayon_incident, objets,0);
                 scene.pixels[j * image_width + i] = pixel_color;
             }
     }
@@ -201,7 +200,7 @@ public:
     std::cerr << std::endl
               << "Temps de calcul : " << temps_calcul.count() << "s\n";
 
-    scene.savePicture(filename, 2);
+    scene.savePicture(filename, 1);
 }
 
 void calcul(const char* filename)

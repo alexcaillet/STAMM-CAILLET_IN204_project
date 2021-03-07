@@ -76,6 +76,8 @@ private:
             img[3*i+2]=(char)(int)pixels[i].z;
         }
         //stbi_write_jpg(filename, w, h, 3, img, 100);
+        QImage *monimage = new QImage(img, w, h, QImage::Format_RGB888);
+        monimage->save(QString(filename), "jpeg");
         free(img);
     }
 
