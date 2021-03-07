@@ -161,10 +161,10 @@ public:
         //pixel_color.y = std::min(255.0, pixel_color.y*facteur_eclaircissement);
         //pixel_color.z = std::min(255.0, pixel_color.z*facteur_eclaircissement);
 
-        return pixel_color + closest_object->emission; //*abs(normale.dot(rayon.direction));
+        return pixel_color*0.8 + closest_object->emission ; //*abs(normale.dot(rayon.direction));
     }
 
-    void rendu(std::vector<Objet *> objets, int image_width, int image_height, Camera camera, const char *filename)
+    void rendu(std::vector<Objet *> objets, int image_width, int image_height, Camera camera, const char *filename, int* progress)
     {
         Picture scene(image_width, image_height);
 
@@ -176,6 +176,7 @@ public:
         //calcul des pixels
         for (j = 0; j < image_height; j++)
         {
+            *progress = 100*j/(image_height-1);
             std::cerr << "\rLignes restantes: " << image_height - 1 - j << ' ' << std::flush;
             #pragma omp parallel for schedule(dynamic, 10) private(i, s) num_threads(omp_get_max_threads())
             for (i = 0; i < image_width; i++)
@@ -203,19 +204,22 @@ public:
     scene.savePicture(filename, 2);
 }
 
-void calcul(const char* filename)
+void calcul(const char* filename, int* progress)
 {
     //const int image_width = 640;
     //const int image_height = 360;
 
-    const int image_width = 1920;
-    const int image_height = 1080;
+    //const int image_width = 1920;
+    //const int image_height = 1080;
 
     //16K
     //const int image_width = 15360;
     //const int image_height = 8640;
 
-    Camera camera(Vec(5, 0, 15), Vec(-0.1, 0, -1), image_width, image_height, 80, 0);
+    int image_height, image_width;
+    readDimension( filename, &image_width, &image_height);
+
+    Camera camera = readCamera(filename);
 
     //ajout d'objets
 
@@ -247,8 +251,7 @@ void calcul(const char* filename)
     //objets.push_back( new Cylindre(Disque(Vec(0, 0, -25), bleu, 0.7, 0.5, Vec(3.0, 0.0, 0.0), Vec(0.0, -1.0, 0.0)), 3.0));
     */
 
-    int fov = 90;
-    rendu(objets, image_width, image_height, camera, "premier_test.png");
+    rendu(objets, image_width, image_height, camera, "premier_test.png", progress);
     for (unsigned int i = 0; i < objets.size(); i++)
     {
         delete objets[i];

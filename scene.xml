@@ -1,8 +1,16 @@
 <scene>
 	<dimension>
-		<width>640</width>
-		<height>360</height>
+		<width>1920</width> <!-- 640/360 petite image, 1920/1080 HD, 15360/8640 16K-->
+		<height>1080</height>
 	</dimension>
+
+
+	<camera>
+		 <position x="5" y="0" z="15" />
+		 <axe x="-0.1" y="0" z="-1" />
+		 <fieldOfView>80</fieldOfView>
+		 <tilt>0</tilt>
+	</camera>
 
 	<objets>
 		<sphere>
@@ -10,8 +18,8 @@
 			<rayon>2.0</rayon>
 			<couleur x="255" y="0" z="0" />
 			<emission x="0" y="0" z="0" />
-			<re>0.8</re>
-			<tr>0.2</tr>
+			<re>0.5</re>
+			<tr>0.5</tr>
 		</sphere>
 
 		<sphere>
@@ -19,8 +27,8 @@
 			<rayon>0.5</rayon>
 			<couleur x="0" y="255" z="0" />
 			<emission x="0" y="0" z="0" />
-			<re>0.8</re>
-			<tr>0.2</tr>
+			<re>0.5</re>
+			<tr>0.5</tr>
 		</sphere>
 
 		<sphere>
@@ -28,8 +36,8 @@
 			<rayon>1.5</rayon>
 			<couleur x="0" y="0" z="255" />
 			<emission x="0" y="0" z="0" />
-			<re>0.8</re>
-			<tr>0.2</tr>
+			<re>0.5</re>
+			<tr>0.5</tr>
 		</sphere>
 
 		<plan>
@@ -39,7 +47,7 @@
 			<largeur x="0" y="5" z="0" />
 			<emission x="0" y="0" z="0" />
 			<re>0.9</re>
-			<tr>0</tr>
+			<tr>0.1</tr>
 		</plan>
 
 		<plan>
@@ -49,29 +57,43 @@
 			<largeur x="0" y="0" z="-300" />
 			<emission x="0" y="0" z="0" />
 			<re>0.9</re>
-			<tr>1</tr>
+			<tr>0.1</tr>
 		</plan>
 
 		<parallelepipede>
-			<position x="-10" y="1" z="-15" />
-			<couleur x="0" y="0" z="255" />
-			<longueur x="1" y="0" z="0" />
-			<largeur x="0" y="0" z="1" />
-			<hauteur x="0" y="1" z="0" />
+			<position x="-7" y="1" z="-15" />
+			<couleur x="255" y="255" z="255" />
+			<longueur x="1" y="0" z="-1" />
+			<largeur x="-2" y="-1" z="-2" />
+			<hauteur x="-1" y="4" z="-1" />
 			<emission x="0" y="0" z="0" />
-			<re>0.3</re>
-			<tr>0.7</tr>
+			<re>0.01</re>
+			<tr>0.99</tr>
 		</parallelepipede>
+
+		
+		<disque>
+			<position x="-4.0" y="2.0" z="-25" />
+			<rayon>3.0</rayon>
+			<normale x="1.0" y="0" z="0.2" />
+			<couleur x="250" y="250" z="0" />
+			<emission x="0" y="0" z="0" />
+			<re>0.9</re>
+			<tr>0.2</tr>
+		</disque> 
+		
+		<cylindre>
+			<position x="-3.0" y="1.0" z="-15" />
+			<rayon>1.0</rayon>
+			<normale x="0.0" y="-1.0" z="-1.0" />
+			<couleur x="0" y="250" z="0" />
+			<emission x="0" y="0" z="0" />
+			<re>0.5</re>
+			<tr>0.5</tr>
+			<hauteur>3.0</hauteur>
+		</cylindre>
 
 		
 	</objets>
 
-	<camera>
-		 
-	</camera>
-
-
-
 </scene>
-
-

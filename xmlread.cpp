@@ -311,6 +311,28 @@ std::vector<Cylindre *> readCylindres(const char* filename)
     return cylindres;
 }
 
+void readDimension(const char* filename, int* width, int* height)
+{
+    XMLDocument doc;
+    doc.LoadFile( filename );
+    XMLElement *scene = doc.RootElement();
+
+    if( scene )
+    {   
+        XMLElement *dimension = scene->FirstChildElement( "dimension" );
+        if (dimension)
+        {
+            XMLElement *image_width = dimension->FirstChildElement( "width");
+            if (image_width)
+                *width=atoi(image_width->GetText());
+
+            XMLElement *image_height = dimension->FirstChildElement( "height");
+            if (image_height)
+                *height=atoi(image_height->GetText());
+        }
+    }
+}
+
 
 Camera readCamera(const char* filename)
 {
@@ -327,48 +349,47 @@ Camera readCamera(const char* filename)
     Camera cameraRes;
     
     if( scene )
-    {
-        XMLElement *spectateur = scene->FirstChildElement( "spectateur" );
- 
-        if ( spectateur )
-        {   
-            XMLElement *camera = spectateur->FirstChildElement( "camera" );
-     
-            if(camera)
-            {
+    {   
+        XMLElement *dimension = scene->FirstChildElement( "dimension" );
+        if (dimension)
+        {
+            XMLElement *image_width = dimension->FirstChildElement( "width");
+            if (image_width)
+                iwidth=atoi(image_width->GetText());
 
-                XMLElement *position = camera->FirstChildElement( "position");
-                float xp,yp,zp;
-                if (position)
-                    xyz(&xp,&yp,&zp,position);
+            XMLElement *image_height = dimension->FirstChildElement( "height");
+            if (image_height)
+                iheight=atoi(image_height->GetText());
+        }
+        XMLElement *camera = scene->FirstChildElement( "camera" );
 
-                XMLElement *axe = camera->FirstChildElement( "axe");
-                float xa,ya,za;
-                if (axe)
-                    xyz(&xa,&ya,&za,axe);
+        if(camera)
+        {
 
+            XMLElement *position = camera->FirstChildElement( "position");
+            float xp,yp,zp;
+            if (position)
+                xyz(&xp,&yp,&zp,position);
 
-                XMLElement *image_width = camera->FirstChildElement( "image_width");
-                if (image_width)
-                    iwidth=atoi(image_width->GetText());
+            XMLElement *axe = camera->FirstChildElement( "axe");
+            float xa,ya,za;
+            if (axe)
+                xyz(&xa,&ya,&za,axe);
 
-                XMLElement *image_height = camera->FirstChildElement( "image_height");
-                if (image_height)
-                    iheight=atoi(image_height->GetText());
-
-                XMLElement *fieldOfView = camera->FirstChildElement("fieldOfView");
-                if (fieldOfView)
-                    ifieldOfView=atoi(fieldOfView->GetText());
-
-                XMLElement *tilt = camera->FirstChildElement( "tilt");
-                if (tilt){
-                    QString tilt_str = tilt->GetText();
-                    itilt = tilt_str.toFloat();}
-
-                Camera cameraRes_t = Camera(Vec(xp,yp,zp),Vec(xa,ya,za),iwidth,iheight,ifieldOfView,itilt);
-
+            XMLElement *fieldOfView = camera->FirstChildElement("fieldOfView");
+            if (fieldOfView){
+                QString fov_str = fieldOfView->GetText();
+                ifieldOfView =  fov_str.toFloat();
             }
-        
+
+            XMLElement *tilt = camera->FirstChildElement( "tilt");
+            if (tilt){
+                QString tilt_str = tilt->GetText();
+                itilt = tilt_str.toFloat();
+            }
+
+            Camera cameraRes_t(Vec(xp,yp,zp),Vec(xa,ya,za),iwidth,iheight,ifieldOfView,itilt);
+            return cameraRes_t;
         }
     }
     return cameraRes;

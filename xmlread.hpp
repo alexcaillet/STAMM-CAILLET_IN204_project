@@ -35,10 +35,9 @@ std::vector<Disque*> readDisques(const char* filename);
 
 std::vector<Cylindre*> readCylindres(const char* filename);
 
-/*
-Camera readCamera();*/
+void readDimension(const char* filename, int *width, int *height);
 
-
+Camera readCamera(const char* filename);
 
 std :: vector <Objet*> read(const char* filename);
 
