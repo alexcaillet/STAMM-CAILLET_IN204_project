@@ -29,7 +29,7 @@
 #define blanc Vec(255, 255, 255)
 #define noir Vec(0, 0, 0)
 
-#define max_depth 10
+#define max_depth 100
 
 class moteur_rendu
 {
@@ -61,7 +61,7 @@ public:
         //C'est la condition de terminaison de la fct recursive
         if (closest_object_index == -1)
         {
-            return grisclair;
+            return blanc;
         }
 
         Objet *closest_object = objets[closest_object_index];
@@ -98,7 +98,13 @@ public:
 
         if (closest_object->transparence > 0 && depth < max_depth)
         {
+
+            float epsilon = 1e-4;
+            //On gère l'effet fresnel
+            float facingratio = rayon.direction.dot(normale);
+            static float fresneleffect = mix(pow(1 - facingratio, 3), 1, 0.1);
             bool inside = false;
+
             normale = -normale;
 
             //On adapte la normale pour la réfraction
@@ -177,7 +183,7 @@ public:
         for (j = 0; j < image_height; j++)
         {
             std::cerr << "\rLignes restantes: " << image_height - 1 - j << ' ' << std::flush;
-            #pragma omp parallel for schedule(dynamic, 10) private(i, s) num_threads(omp_get_max_threads())
+            #pragma omp parallel for schedule(dynamic, 100) private(i, s) num_threads(omp_get_max_threads())
             for (i = 0; i < image_width; i++)
             {
                 Vec pixel_color = Vec();
@@ -189,9 +195,9 @@ public:
                     pixel_color += calcul_pixel(rayon_incident, objets, 0);
                 }
                 pixel_color = pixel_color * (1.0 / sample_per_pixel);
-                pixel_color.x = std ::min(double(255), pixel_color.x);
-                pixel_color.y = std ::min(double(255), pixel_color.y);
-                pixel_color.z = std ::min(double(255), pixel_color.z);
+                //pixel_color.x = std ::min(double(255), pixel_color.x);
+                //pixel_color.y = std ::min(double(255), pixel_color.y);
+                //pixel_color.z = std ::min(double(255), pixel_color.z);
                 scene.pixels[j * image_width + i] = pixel_color;
             }
     }

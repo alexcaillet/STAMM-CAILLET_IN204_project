@@ -1,0 +1,104 @@
+<scene>
+	<dimension>
+		<width>1920</width> <!-- 640/360 petite image, 1920/1080 HD, 15360/8640 16K-->
+		<height>1080</height>
+	</dimension>
+
+
+	<camera>
+		 <position x="5" y="0" z="15" />
+		 <axe x="-0.1" y="0" z="-1" />
+		 <fieldOfView>80</fieldOfView>
+		 <tilt>0</tilt>
+	</camera>
+
+
+	<objets>
+		<sphere>
+			<position x="-3" y="1.0" z="-25" />
+			<rayon>2.5</rayon>
+			<couleur x="233" y="30" z="199" />
+			<emission x="0" y="0" z="0" />
+			<re>0.5</re>
+			<tr>0.5</tr>
+		</sphere>
+
+		<sphere>
+			<position x="-5.0" y="2" z="-25" />
+			<rayon>1.5</rayon>
+			<couleur x="80" y="133" z="238" />
+			<emission x="0" y="0" z="0" />
+			<re>0.5</re>
+			<tr>0.5</tr>
+		</sphere>
+
+		<sphere>
+			<position x="-4" y="1.0" z="-20" />
+			<rayon>1.5</rayon>
+			<couleur x="255" y="255" z="0" />
+			<emission x="0" y="0" z="0" />
+			<re>0.1</re>
+			<tr>0.9</tr>
+		</sphere>
+
+		<sphere>
+			<position x="3" y="0.0" z="-25" />
+			<rayon>0.5</rayon>
+			<couleur x="255" y="145" z="0" />
+			<emission x="0" y="0" z="0" />
+			<re>0.5</re>
+			<tr>0.5</tr>
+		</sphere>
+
+		<sphere>
+			<position x="1.0" y="2" z="-20" />
+			<rayon>1.5</rayon>
+			<couleur x="0" y="0" z="255" />
+			<emission x="0" y="0" z="0" />
+			<re>0.8</re>
+			<tr>0.2</tr>
+		</sphere>
+
+		<sphere>
+			<position x="1.0" y="10" z="-20" />
+			<rayon>3</rayon>
+			<couleur x="226" y="236" z="92" />
+			<emission x="20" y="20" z="20" />
+			<re>0.8</re>
+			<tr>0.2</tr>
+		</sphere>
+
+		<sphere>
+			<position x="1.5" y="3" z="-45" />
+			<rayon>2.0</rayon>
+			<couleur x="255" y="0" z="0" />
+			<emission x="0" y="0" z="0" />
+			<re>0.5</re>
+			<tr>0.5</tr>
+		</sphere>
+
+
+		<plan>
+			<position x="0.0" y="-2.0" z="-40" />
+			<couleur x="0" y="150" z="150" />
+			<longueur x="15" y="0" z="10" />
+			<largeur x="0" y="5" z="0" />
+			<emission x="0" y="0" z="0" />
+			<re>0.5</re>
+			<tr>0.5</tr>
+		</plan>
+
+		<plan>
+			<position x="-100" y="-5.0" z="0" />
+			<couleur x="0" y="240" z="0" />
+			<longueur x="150" y="0" z="0" />
+			<largeur x="0" y="0" z="-300" />
+			<emission x="0" y="0" z="0" />
+			<re>0.8</re>
+			<tr>0.1</tr>
+		</plan>
+
+		
+	</objets>
+
+</scene>
