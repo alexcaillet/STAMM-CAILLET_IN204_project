@@ -6,12 +6,8 @@
 #include <fstream>
 #include <vector>
 #include "vecteur.hpp"
-//#define STB_IMAGE_WRITE_IMPLEMENTATION
-//#include "stb-master/stb_image_write.h"
-//#if defined(QT_VERSION)
 #include <QString>
 #include <QImage>
-//#endif
 
 class Picture
 {
@@ -75,7 +71,6 @@ private:
             img[3*i+1]=(char)(int)pixels[i].y;
             img[3*i+2]=(char)(int)pixels[i].z;
         }
-        //stbi_write_jpg(filename, w, h, 3, img, 100);
         QImage *monimage = new QImage(img, w, h, QImage::Format_RGB888);
         monimage->save(QString(filename), "jpeg");
         free(img);
@@ -89,11 +84,9 @@ private:
             img[3*i+1]=(char)(int)pixels[i].y;
             img[3*i+2]=(char)(int)pixels[i].z;
         }
-        //stbi_write_png(filename, w, h, 3, img, w*3);
-        //#if defined(QT_VERSION)
+
         QImage *monimage = new QImage(img, w, h, QImage::Format_RGB888);
         monimage->save(QString(filename), "png");
-        //#endif
         free(img);
     }
 

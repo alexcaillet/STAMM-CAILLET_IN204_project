@@ -38,7 +38,7 @@
 			<longueur x="15" y="0" z="10" />
 			<largeur x="0" y="5" z="0" />
 			<emission x="0" y="0" z="0" />
-			<re>1</re>
+			<re>0.9</re>
 			<tr>0</tr>
 		</plan>
 

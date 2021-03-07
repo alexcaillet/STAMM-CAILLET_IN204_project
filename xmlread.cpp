@@ -1,4 +1,5 @@
 #include <iostream>
+#include <QString>
 #include "vecteur.hpp"
 #include "XML/tinyxml2.h"
 #include "objet.hpp"
@@ -17,12 +18,15 @@ void xyz(float *x, float *y, float *z, XMLElement *element)
         const char *cy = element->Attribute("y");
         const char *cz = element->Attribute("z");
         //std :: cout << cz << std :: endl;
-        if (cx)
-            *x = atof(cx);
-        if (cy)    
-            *y = atof(cy);
-        if (cz)    
-            *z = atof(cz);
+        if (cx){
+            QString x_str = QString::fromUtf8(cx);
+            *x = x_str.toFloat();}
+        if (cy){
+            QString y_str = QString::fromUtf8(cy);
+            *y = y_str.toFloat();}
+        if (cz){
+            QString z_str = QString::fromUtf8(cz);
+            *z = z_str.toFloat();}
         }
 }
 
@@ -48,13 +52,15 @@ void baseAttributes(float *xp, float *yp, float *zp,
         *xe=0,*ye=0,*ze=0;
 
     XMLElement *reflec = element->FirstChildElement( "re");
-    //std :: cout << reflec->GetText() << std :: endl;
-    if (reflec)
-        *re=atof(reflec->GetText());
+    if (reflec){
+        QString refl = reflec->GetText();
+        *re = refl.toFloat();
+        }
 
     XMLElement *transp = element->FirstChildElement( "tr");
-    if (transp)
-        *tr=atof(transp->GetText());
+    if (transp){
+        QString trans = transp->GetText();
+        *tr = trans.toFloat();}
 
 }
 
@@ -86,8 +92,9 @@ std::vector<Sphere *> readSpheres(const char* filename)
                 baseAttributes(&xp,&yp,&zp,&xc,&yc,&zc,&xe,&ye,&ze,&re,&tr,sphere);
 
                 XMLElement *rayon = sphere->FirstChildElement( "rayon");
-                if (rayon)
-                    iradius=atof(rayon->GetText());
+                if (rayon){
+                    QString rad_str = rayon->GetText();
+                    iradius = rad_str.toFloat();}
 
                 Sphere *sphere_t = new Sphere(Vec(xp,yp,zp), Vec(xc,yc,zc), re, tr, Vec(xe,ye,ze),iradius);
 
@@ -229,8 +236,9 @@ std::vector<Disque *> readDisques(const char* filename)
                 baseAttributes(&xp,&yp,&zp,&xc,&yc,&zc,&xe,&ye,&ze,&re,&tr,disque);
 
                 XMLElement *rayon = disque->FirstChildElement( "rayon");
-                if (rayon)
-                    iradius=atof(rayon->GetText());
+                if (rayon){
+                    QString rad_str = rayon->GetText();
+                    iradius = rad_str.toFloat();}
 
                 XMLElement *normale = disque->FirstChildElement( "normale");
                 float xn,yn,zn;
@@ -277,8 +285,9 @@ std::vector<Cylindre *> readCylindres(const char* filename)
                 baseAttributes(&xp,&yp,&zp,&xc,&yc,&zc,&xe,&ye,&ze,&re,&tr,cylindre);
 
                 XMLElement *rayon = cylindre->FirstChildElement( "rayon");
-                if (rayon)
-                    iradius=atof(rayon->GetText());
+                if (rayon){
+                    QString rad_str = rayon->GetText();
+                    iradius = rad_str.toFloat();}
 
                 XMLElement *normale = cylindre->FirstChildElement( "normale");
                 float xn,yn,zn;
@@ -287,8 +296,9 @@ std::vector<Cylindre *> readCylindres(const char* filename)
 
 
                 XMLElement *hauteur = cylindre->FirstChildElement( "hauteur");
-                if (hauteur)
-                    ihauteur=atof(hauteur->GetText());
+                if (hauteur){
+                    QString h_str = hauteur->GetText();
+                    ihauteur = h_str.toFloat();}
 
                 Cylindre *cylindre_t = new Cylindre(Disque(Vec(xp,yp,zp), Vec(xc,yc,zc), re, tr, Vec(xe,ye,ze),
                                          iradius, Vec(xn,yn,zn)),ihauteur); 
@@ -351,8 +361,9 @@ Camera readCamera(const char* filename)
                     ifieldOfView=atoi(fieldOfView->GetText());
 
                 XMLElement *tilt = camera->FirstChildElement( "tilt");
-                if (tilt)
-                    itilt=atof(tilt->GetText());
+                if (tilt){
+                    QString tilt_str = tilt->GetText();
+                    itilt = tilt_str.toFloat();}
 
                 Camera cameraRes_t = Camera(Vec(xp,yp,zp),Vec(xa,ya,za),iwidth,iheight,ifieldOfView,itilt);
 

@@ -221,9 +221,6 @@ void calcul(const char* filename)
 
     std::vector<Objet *> objets = read(filename);
 
-    std::cout << objets[0]->reflectivite << std::endl;
-    std::cout << objets[3]->reflectivite << std::endl;
-
     /*
     //objets.push_back(new Sphere(Vec(4, 20.0, -45.0), Vec(255, 255, 255), 0.0, 0.0, Vec(0, 0, 0), 10.0));
     objets.push_back(new Sphere(Vec(-3.0, 1.0, -35.0), rouge, 0.8, 0.2, 2.0));
