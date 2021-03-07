@@ -161,7 +161,7 @@ public:
         //pixel_color.y = std::min(255.0, pixel_color.y*facteur_eclaircissement);
         //pixel_color.z = std::min(255.0, pixel_color.z*facteur_eclaircissement);
 
-        return pixel_color + closest_object->emission; //*abs(normale.dot(rayon.direction));
+        return pixel_color*0.8 + closest_object->emission ;//*abs(normale.dot(rayon.direction));
     }
 
     void rendu(std::vector<Objet *> objets, int image_width, int image_height, Camera camera, const char *filename)
@@ -208,18 +208,24 @@ void calcul(const char* filename)
     //const int image_width = 640;
     //const int image_height = 360;
 
-    const int image_width = 1920;
-    const int image_height = 1080;
+    //const int image_width = 1920;
+    //const int image_height = 1080;
 
     //16K
     //const int image_width = 15360;
     //const int image_height = 8640;
 
-    Camera camera(Vec(5, 0, 15), Vec(-0.1, 0, -1), image_width, image_height, 80, 0);
+    int image_height, image_width;
+    readDimension( filename, &image_width, &image_height);
+
+    Camera camera = readCamera(filename);
 
     //ajout d'objets
 
     std::vector<Objet *> objets = read(filename);
+
+    //objets.push_back( new Cylindre(Disque(Vec(2, 1, -15), Vec(20,20,255), 0.5, 0.5, 1.0, Vec(0.0, -1.0, -1.0)), 3.0));
+
 
     /*
     //objets.push_back(new Sphere(Vec(4, 20.0, -45.0), Vec(255, 255, 255), 0.0, 0.0, Vec(0, 0, 0), 10.0));
@@ -239,9 +245,8 @@ void calcul(const char* filename)
 
     objets.push_back(new Parallelepipede(Vec(-10.0, 2.0, -15.0), bleu, 0.4, 0.6, Vec(2.5 * sqrt(2), 0.0, -2.5 * sqrt(2)).prod_vec(Vec(-2.5 * sqrt(2), -3.0, -2.5 * sqrt(2))) * 0.25, Vec(-2.5 * sqrt(2), -3.0, -2.5 * sqrt(2)), Vec(2.5 * sqrt(2), 0.0, -2.5 * sqrt(2))));
 
-    //objets.push_back( new Disque(Vec(-3.0, 2.0, -25.0), rouge, 0.9, 0.2, 3.0, Vec(1.0, 0, 0.2)));
+    //objets.push_back( new Disque(Vec(-4.0, 2.0, -25.0), Vec(255,255,0) ,0.9, 0.2, 3.0, Vec(1.0, 0, 0.2)));
 
-    //objets.push_back( new Cylindre(Disque(Vec(2, 1, -25), bleu, 0.5, 0.01, 3.0, Vec(0.0, -1.0, -1.0)), 3.0));
     //objets.push_back( new Cylindre(Disque(Vec(-3, 1, -25), bleu, 0.5, 0.0, 1.0, Vec(-1.0, 0.0, 0.0)), 5.0));
 
     //objets.push_back( new Cylindre(Disque(Vec(0, 0, -25), bleu, 0.7, 0.5, Vec(3.0, 0.0, 0.0), Vec(0.0, -1.0, 0.0)), 3.0));
