@@ -301,6 +301,11 @@ public:
 		normalVector.normalize();
 	}
 
+	Disque(Vec pos, Vec col, double reflec, double transp, Vec em, double r, Vec normale) : Objet(pos, col, reflec, transp, em), rayon(r), normalVector(normale)
+	{
+		normalVector.normalize();
+	}
+
 	//constructeur de recopie
 	Disque(Disque disque, Vec pos): Objet(pos, disque.couleur, disque.reflectivite, disque.transparence), rayon(disque.rayon), normalVector(disque.normalVector) {}
 
@@ -361,7 +366,7 @@ public:
 
 	Cylindre() : Objet(), base(Disque()), hauteur(Vec(0, 1, 0)) {}
 
-	Cylindre(Disque ba, double h) : Objet(ba.position, ba.couleur, ba.reflectivite, ba.transparence), base(ba) {
+	Cylindre(Disque ba, double h) : Objet(ba.position, ba.couleur, ba.reflectivite, ba.transparence, ba.emission), base(ba) {
 		hauteur = -base.normalVector*h;
 	}
 

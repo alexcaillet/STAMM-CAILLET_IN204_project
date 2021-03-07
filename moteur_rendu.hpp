@@ -15,6 +15,7 @@
 #include "objet.hpp"
 #include "ray.hpp"
 #include "camera.hpp"
+#include "xmlread.hpp"
 
 #define PI 3.141592653589793
 #define INFINI 1e8
@@ -172,9 +173,7 @@ public:
 
         auto start = std::chrono::system_clock::now();
 
-        int i;
-        int j;
-        int s;
+        int i,j,s;
         //calcul des pixels
         for (j = 0; j < image_height; j++)
         {
