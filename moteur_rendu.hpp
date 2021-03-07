@@ -206,11 +206,11 @@ public:
 
 void calcul(const char* filename)
 {
-    const int image_width = 640;
-    const int image_height = 360;
+    //const int image_width = 640;
+    //const int image_height = 360;
 
-    //const int image_width = 1920;
-    //const int image_height = 1080;
+    const int image_width = 1920;
+    const int image_height = 1080;
 
     //16K
     //const int image_width = 15360;
@@ -247,7 +247,7 @@ void calcul(const char* filename)
 
     //objets.push_back( new Cylindre(Disque(Vec(0, 0, -25), bleu, 0.7, 0.5, Vec(3.0, 0.0, 0.0), Vec(0.0, -1.0, 0.0)), 3.0));
     */
-    
+
     int fov = 90;
     rendu(objets, image_width, image_height, camera, "premier_test.png");
     for (unsigned int i = 0; i < objets.size(); i++)
