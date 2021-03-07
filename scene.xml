@@ -1,53 +1,77 @@
 <scene>
+	<dimension>
+		<width>640</width>
+		<height>360</height>
+	</dimension>
+
 	<objets>
-		
 		<sphere>
-			<position x="0" y="0" z="-20" />
-			<rayon>4</rayon>
-			<couleur x="1" y="0.32" z="O.36" />
-			<emission>0</emission>
-			<re>1</re>
-			<tr>0.5</tr>
+			<position x="-3" y="1.0" z="-35" />
+			<rayon>2.0</rayon>
+			<couleur x="255" y="0" z="0" />
+			<emission x="0" y="0" z="0" />
+			<re>0.8</re>
+			<tr>0.2</tr>
 		</sphere>
 
 		<sphere>
-			<position x="5" y="-1" z="-15" />
-			<rayon>2</rayon>
-			<couleur x="0.90" y="0.76" z="0.46" />
-			<emission>0</emission>
-			<re>1</re>
-			<tr>0</tr>
+			<position x="3" y="-1.0" z="-35" />
+			<rayon>0.5</rayon>
+			<couleur x="0" y="255" z="0" />
+			<emission x="0" y="0" z="0" />
+			<re>0.8</re>
+			<tr>0.2</tr>
 		</sphere>
 
-		<parallelepipede>
-			<position x="-5.5" y="0" z="-15" />
-			<couleur x="100" y="0" z="0.80" />
-			<orientation x="10" y="420" z="420" />
-			<longueur> 10 </longueur>
-			<largeur> 10 </largeur>
-			<hauteur> 420 </hauteur>
-			<emission>0</emission>
-			<re>1</re>
-			<tr>0</tr>
-		</parallelepipede>
+		<sphere>
+			<position x="1.0" y="2" z="-30" />
+			<rayon>1.5</rayon>
+			<couleur x="0" y="0" z="255" />
+			<emission x="0" y="0" z="0" />
+			<re>0.8</re>
+			<tr>0.2</tr>
+		</sphere>
 
 		<plan>
-			<position x="-5.5" y="0" z="-15" />
-			<couleur x="0.6" y="0" z="0.80" />
-			<normal x="1" y="0" z="0" />
-			<longueur> 10 </longueur>
-			<largeur> 10 </largeur>
-			<emission>0</emission>
+			<position x="0.0" y="-2.0" z="-40" />
+			<couleur x="0" y="150" z="150" />
+			<longueur x="15" y="0" z="10" />
+			<largeur x="0" y="5" z="0" />
+			<emission x="0" y="0" z="0" />
 			<re>1</re>
 			<tr>0</tr>
-
 		</plan>
+
+		<plan>
+			<position x="-100" y="-5.0" z="0" />
+			<couleur x="0" y="255" z="0" />
+			<longueur x="200" y="0" z="0" />
+			<largeur x="0" y="0" z="-300" />
+			<emission x="0" y="0" z="0" />
+			<re>0.9</re>
+			<tr>1</tr>
+		</plan>
+
+		<parallelepipede>
+			<position x="-10" y="1" z="-15" />
+			<couleur x="0" y="0" z="255" />
+			<longueur x="1" y="0" z="0" />
+			<largeur x="0" y="0" z="1" />
+			<hauteur x="0" y="1" z="0" />
+			<emission x="0" y="0" z="0" />
+			<re>0.3</re>
+			<tr>0.7</tr>
+		</parallelepipede>
+
 		
 	</objets>
 
 	<camera>
 		 
 	</camera>
+
+
+
 </scene>
 
 

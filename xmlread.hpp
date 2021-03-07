@@ -19,27 +19,27 @@ void baseAttributes(float *xp, float *yp, float *zp,
                     float *re, float *tr, XMLElement *element);
 
 
-std::vector<Sphere> readSpheres(const char* filename);
+std::vector<Sphere*> readSpheres(const char* filename);
 
 
 
-std::vector<Plan> readPlans(const char* filename);
+std::vector<Plan*> readPlans(const char* filename);
 
 
 
-std::vector<Parallelepipede> readParalls(const char* filename);
+std::vector<Parallelepipede*> readParalls(const char* filename);
 
 
-std::vector<Disque> readDisques(const char* filename);
+std::vector<Disque*> readDisques(const char* filename);
 
 
-std::vector<Cylindre> readCylindres(const char* filename);
+std::vector<Cylindre*> readCylindres(const char* filename);
 
 /*
 Camera readCamera();*/
 
 
 
-std :: vector <Objet> read(const char* filename);
+std :: vector <Objet*> read(const char* filename);
 
 #endif

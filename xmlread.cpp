@@ -59,10 +59,10 @@ void baseAttributes(float *xp, float *yp, float *zp,
 }
 
 
-std::vector<Sphere> readSpheres(const char* filename)
+std::vector<Sphere *> readSpheres(const char* filename)
 {
     XMLDocument doc;
-    std::vector<Sphere> spheres; 
+    std::vector<Sphere*> spheres; 
     doc.LoadFile(filename);
     
     XMLElement *scene = doc.RootElement();
@@ -89,7 +89,9 @@ std::vector<Sphere> readSpheres(const char* filename)
                 if (rayon)
                     iradius=atof(rayon->GetText());
 
-                spheres.push_back(Sphere(Vec(xp,yp,zp), Vec(xc,yc,zc), re, tr, Vec(xe,ye,ze),iradius)); 
+                Sphere *sphere_t = new Sphere(Vec(xp,yp,zp), Vec(xc,yc,zc), re, tr, Vec(xe,ye,ze),iradius);
+
+                spheres.push_back(sphere_t);
 
                 sphere = sphere->NextSiblingElement( "sphere" );
             }
@@ -100,10 +102,10 @@ std::vector<Sphere> readSpheres(const char* filename)
 
 
 
-std::vector<Plan> readPlans(const char* filename)
+std::vector<Plan *> readPlans(const char* filename)
 {
     XMLDocument doc;
-    std::vector<Plan> plans; 
+    std::vector<Plan*> plans; 
     doc.LoadFile(filename);
     
     XMLElement *scene = doc.RootElement();
@@ -134,9 +136,10 @@ std::vector<Plan> readPlans(const char* filename)
                 float xla,yla,zla;
                 if (largeur)
                     xyz(&xla,&yla,&zla,largeur);
-				
-               	plans.push_back(Plan(Vec(xp,yp,zp), Vec(xc, yc, zc), re, tr, Vec(xe,ye,ze),
-                                     Vec(xlo,ylo,zlo), Vec(xla,yla,zla)));
+
+				Plan *plan_t = new Plan(Vec(xp,yp,zp), Vec(xc, yc, zc), re, tr, Vec(xe,ye,ze),
+                                     Vec(xlo,ylo,zlo), Vec(xla,yla,zla));
+               	plans.push_back(plan_t);
 
                 plan = plan->NextSiblingElement( "plan" );
             }
@@ -147,10 +150,10 @@ std::vector<Plan> readPlans(const char* filename)
 
 
 
-std::vector<Parallelepipede> readParalls(const char* filename)
+std::vector<Parallelepipede *> readParalls(const char* filename)
 {
     XMLDocument doc;
-    std::vector<Parallelepipede> paralls; 
+    std::vector<Parallelepipede*> paralls; 
     doc.LoadFile(filename);
     
     XMLElement *scene = doc.RootElement();
@@ -188,9 +191,9 @@ std::vector<Parallelepipede> readParalls(const char* filename)
                 if (hauteur)
                     xyz(&xh,&yh,&zh,hauteur);
                 
-                paralls.push_back(Parallelepipede(Vec(xp,yp,zp), Vec(xc, yc, zc), re, tr, Vec(xe,ye,ze),
-                                                  Vec(xh,yh,zh), Vec(xlo,ylo,zlo), Vec(xla,yla,zla)));
-
+                Parallelepipede *parall_t = new Parallelepipede(Vec(xp,yp,zp), Vec(xc, yc, zc), re, tr, Vec(xe,ye,ze),
+                                                  Vec(xh,yh,zh), Vec(xlo,ylo,zlo), Vec(xla,yla,zla));
+                paralls.push_back(parall_t);
                 parall = parall->NextSiblingElement( "parallelepipede" );
             }
         }
@@ -199,10 +202,10 @@ std::vector<Parallelepipede> readParalls(const char* filename)
 }
 
 
-std::vector<Disque> readDisques(const char* filename)
+std::vector<Disque *> readDisques(const char* filename)
 {
     XMLDocument doc;
-    std::vector<Disque> disques; 
+    std::vector<Disque*> disques; 
     doc.LoadFile(filename);
     
     XMLElement *scene = doc.RootElement();
@@ -234,8 +237,10 @@ std::vector<Disque> readDisques(const char* filename)
                 if (normale)
                     xyz(&xn,&yn,&zn,normale);
 
-                disques.push_back(Disque(Vec(xp,yp,zp), Vec(xc,yc,zc), re, tr, Vec(xe,ye,ze),
-                                         iradius, Vec(xn,yn,zn))); 
+                Disque *disque_t = new Disque(Vec(xp,yp,zp), Vec(xc,yc,zc), re, tr, Vec(xe,ye,ze),
+                                    iradius, Vec(xn,yn,zn));
+                disques.push_back(disque_t); 
+
 
                 disque = disque->NextSiblingElement( "disque" );
             }
@@ -245,10 +250,10 @@ std::vector<Disque> readDisques(const char* filename)
 }
 
 
-std::vector<Cylindre> readCylindres(const char* filename)
+std::vector<Cylindre *> readCylindres(const char* filename)
 {
     XMLDocument doc;
-    std::vector<Cylindre> cylindres; 
+    std::vector<Cylindre*> cylindres; 
     doc.LoadFile(filename);
     
     XMLElement *scene = doc.RootElement();
@@ -285,8 +290,9 @@ std::vector<Cylindre> readCylindres(const char* filename)
                 if (hauteur)
                     ihauteur=atof(hauteur->GetText());
 
-                cylindres.push_back(Cylindre(Disque(Vec(xp,yp,zp), Vec(xc,yc,zc), re, tr, Vec(xe,ye,ze),
-                                         iradius, Vec(xn,yn,zn)),ihauteur)); 
+                Cylindre *cylindre_t = new Cylindre(Disque(Vec(xp,yp,zp), Vec(xc,yc,zc), re, tr, Vec(xe,ye,ze),
+                                         iradius, Vec(xn,yn,zn)),ihauteur); 
+                cylindres.push_back(cylindre_t); 
 
                 cylindre = cylindre->NextSiblingElement( "cylindre" );
             }
@@ -295,19 +301,20 @@ std::vector<Cylindre> readCylindres(const char* filename)
     return cylindres;
 }
 
-/*
-Camera readCamera()
+
+Camera readCamera(const char* filename)
 {
     XMLDocument doc;
-    doc.LoadFile( "scene.xml" );
+    doc.LoadFile( filename );
     
     XMLElement *scene = doc.RootElement();
-    double iradius;
+    double itilt;
     float xp,yp,zp;
     float xc,yc,zc;
     float xe,ye,ze;
     float re,tr;
-    Camera camera;
+    int iwidth, iheight, ifieldOfView;
+    Camera cameraRes;
     
     if( scene )
     {
@@ -315,7 +322,7 @@ Camera readCamera()
  
         if ( spectateur )
         {   
-            XMLElement *camera = objets->FirstChildElement( "camera" );
+            XMLElement *camera = spectateur->FirstChildElement( "camera" );
      
             if(camera)
             {
@@ -331,40 +338,50 @@ Camera readCamera()
                     xyz(&xa,&ya,&za,axe);
 
 
-                XMLElement *hauteur = camera->FirstChildElement( "hauteur");
-                float xh,yh,zh;
-                if (hauteur)
-                    xyz(&xh,&yh,&zh,hauteur);
+                XMLElement *image_width = camera->FirstChildElement( "image_width");
+                if (image_width)
+                    iwidth=atoi(image_width->GetText());
 
-                cylindre.push_back(Cylindre(Disque(Vec(xp,yp,zp), Vec(xc,yc,zc), re, tr, Vec(xe,ye,ze),
-                                         iradius, Vec(xn,yn,zn)),)); 
+                XMLElement *image_height = camera->FirstChildElement( "image_height");
+                if (image_height)
+                    iheight=atoi(image_height->GetText());
 
-                cylindre = cylindre->NextSiblingElement( "cylindre" );
+                XMLElement *fieldOfView = camera->FirstChildElement("fieldOfView");
+                if (fieldOfView)
+                    ifieldOfView=atoi(fieldOfView->GetText());
+
+                XMLElement *tilt = camera->FirstChildElement( "tilt");
+                if (tilt)
+                    itilt=atof(tilt->GetText());
+
+                Camera cameraRes_t = Camera(Vec(xp,yp,zp),Vec(xa,ya,za),iwidth,iheight,ifieldOfView,itilt);
+
             }
         
+        }
     }
-    return disques;
-}*/
+    return cameraRes;
+}
 
 
-
-std :: vector <Objet> read(const char* filename)
+std :: vector <Objet *> read(const char* filename)
 {   
-    std :: vector <Objet> objets;
+    std :: vector <Objet *> objets;
 
-	std::vector<Sphere> spheres = readSpheres(filename);
+	std::vector<Sphere *> spheres = readSpheres(filename);
+    //std :: cout <<"Test sphere : "<< spheres[0]->position.z << std :: endl;
     objets.insert(objets.end(), spheres.begin(), spheres.end());
 
-	std::vector<Plan> plans = readPlans(filename); 
+	std::vector<Plan *> plans = readPlans(filename); 
     objets.insert(objets.end(), plans.begin(), plans.end());
 
-    std::vector<Parallelepipede> paralls = readParalls(filename);
+    std::vector<Parallelepipede *> paralls = readParalls(filename);
     objets.insert(objets.end(), paralls.begin(), paralls.end());
 
-    std::vector<Disque> disques = readDisques(filename);
+    std::vector<Disque *> disques = readDisques(filename);
     objets.insert(objets.end(), disques.begin(), disques.end());
 
-    std::vector<Cylindre> cylindres = readCylindres(filename);
+    std::vector<Cylindre *> cylindres = readCylindres(filename);
     objets.insert(objets.end(), cylindres.begin(), cylindres.end());
 
     return objets;
