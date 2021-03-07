@@ -127,6 +127,26 @@ public:
         else
         {
             pixel_color = closest_object->couleur; // *abs(normale.dot(rayon.direction));
+            for (int i = 0; i < objets.size(); i++) { 
+            if (objets[i]->emission.x > 0) { 
+                // this is a light
+                Vec transmission(1,1,1); 
+                Vec lumDir = objets[i]->position - point_intersection; 
+                lumDir.normalize(); 
+                for (int j = 0; j < objets.size(); ++j) { 
+                    if (i != j) { 
+                        Ray lighting_rayon(point_intersection + normale * epsilon, lumDir);
+
+                        if (objets[j]->intersect(lighting_rayon, &t, &normale_temp)) { 
+                            transmission = Vec(0,0,0); 
+                            break; 
+                        } 
+                    } 
+                } 
+                pixel_color += closest_object->couleur * transmission * 
+                std::max(double(0), normale.dot(lumDir)) * objets[i]->emission; 
+            } 
+        } 
         }
 
         //eclaircissement de l'image temporaire
@@ -135,7 +155,7 @@ public:
         //pixel_color.y = std::min(255.0, pixel_color.y*facteur_eclaircissement);
         //pixel_color.z = std::min(255.0, pixel_color.z*facteur_eclaircissement);
 
-        return pixel_color; //*abs(normale.dot(rayon.direction));
+        return pixel_color + closest_object->emission; //*abs(normale.dot(rayon.direction));
     }
 
     void rendu(std::vector<Objet *> objets, int image_width, int image_height, int fov, const std::string &filename)
@@ -146,7 +166,7 @@ public:
 
         //Camera camera(image_width, image_height, 80);
 
-        Camera camera(Vec(0, 0, 35), Vec(0, 0, -1), image_width, image_height, 80, 0);
+        Camera camera(Vec(0, 0, 15), Vec(0, 0, -1), image_width, image_height, 80, 0);
 
         int sample_per_pixel = 10; //pour l'anti-aliasing
 
@@ -188,11 +208,11 @@ public:
 
     void calcul()
     {  
-        const int image_width = 640;
-        const int image_height = 360;
+        //const int image_width = 640;
+        //const int image_height = 360;
 
-        //const int image_width = 1920;
-        //const int image_height = 1080;
+        const int image_width = 1920;
+        const int image_height = 1080;
 
         //16K
         //const int image_width = 15360;
@@ -200,22 +220,22 @@ public:
 
         //ajout d'objets
         std::vector<Objet *> objets;
-        //objets.push_back( new Sphere(Vec(-1.5, 0.0, -20.0), Vec(0.0, 0.0, 255.0), 0.0, 0.0, 2.0));
-        //objets.push_back( new Sphere(Vec(-3.0, 0.0, -20.0), rouge, 0.5, 0.5, 2.0));
-        //objets.push_back( new Sphere(Vec(3.0, -1.0, -5.0), Vec(255,0,187), 0.5, 0.5, 0.5));
-        //objets.push_back( new Sphere(Vec(1.0, 2, -35.0), bleu, 0.5, 0.5, 2.0));
+        objets.push_back( new Sphere(Vec(4, 20.0, -45.0), Vec(255, 255, 255), 0.0, 0.0, Vec(0,0,0), 10.0));
+        objets.push_back( new Sphere(Vec(-3.0, 1.0, -35.0), rouge, 0.8, 0.2, 2.0));
+        objets.push_back( new Sphere(Vec(3.0, -1.0, -35.0), vert, 0.8, 0.2, 0.5));
+        objets.push_back( new Sphere(Vec(1.0, 2, -30.0), bleu, 0.8, 0.2, 1.0));
         //objets.push_back( new Sphere(Vec(0.0, 5, -20.0), blanc, 0.5, 0.5, 2.0));
         //objets.push_back( new Sphere(Vec(0.0, -100.5, 0.0), vert, 0.5, 0.0, 100.0));
         //objets.push_back( new Sphere(Vec(-3.0, 10.0, -20.0), Vec(255.0, 0.0, 150.0), 0.0, 0.0, 1.0));
 
         //objets.push_back( new Plan(Vec(0.0, 1.0, -35.0), vert, 0.0, 0.0, Vec(3.0, 0.0, -5.0), Vec(0.0, 3.0, 0.0)));
         //objets.push_back( new Plan(Vec(0.0, 0.0, -35.0), bleu, 0.0, 0.0, Vec(-3.0, 0.0, -5.0), Vec(0.0, 3.0, 0.0)));
-        objets.push_back(new Plan(Vec(0.0, -2.0, -5.0), Vec(0, 150, 150), 0.5, 0.5, Vec(15.0, 0.0, 10.0), Vec(0.0, 5.0, 0.0)));
-        objets.push_back(new Plan(Vec(-8.0, -3.0, 22.0), rouge, 0.5, 0.5, Vec(15, 0.0, 0.0), Vec(0.0, 0.0, -25.0)));
+        objets.push_back(new Plan(Vec(0.0, -2.0, -40.0), Vec(0, 150, 150), 0.5, 0.5, Vec(15.0, 0.0, 10.0), Vec(0.0, 5.0, 0.0)));
+        objets.push_back(new Plan(Vec(-100.0, -5.0, 0.0), vert, 0.9, 0.1, Vec(200, 0.0, 0.0), Vec(0.0, 0.0, -300.0)));
         //objets.push_back( new Plan);
         //objets.push_back( new Plan(Vec(0.0, 0.0, -25.0), rouge, 0.9, 0.9, Vec(0.0, 2.0, -2.0), Vec(2.0, 0.0, 0.0)));
 
-        objets.push_back(new Parallelepipede(Vec(-2.0, 2.0, 10.0), bleu, 0.4, 0.6, Vec(2.5 * sqrt(2), 0.0, -2.5 * sqrt(2)).prod_vec(Vec(-2.5 * sqrt(2), -3.0, -2.5 * sqrt(2))) * 0.25, Vec(-2.5 * sqrt(2), -3.0, -2.5 * sqrt(2)), Vec(2.5 * sqrt(2), 0.0, -2.5 * sqrt(2))));
+        //objets.push_back(new Parallelepipede(Vec(-10.0, 2.0, -15.0), bleu, 0.4, 0.6, Vec(2.5 * sqrt(2), 0.0, -2.5 * sqrt(2)).prod_vec(Vec(-2.5 * sqrt(2), -3.0, -2.5 * sqrt(2))) * 0.25, Vec(-2.5 * sqrt(2), -3.0, -2.5 * sqrt(2)), Vec(2.5 * sqrt(2), 0.0, -2.5 * sqrt(2))));
 
         //objets.push_back( new Disque(Vec(-3.0, 2.0, -25.0), rouge, 0.9, 0.2, 3.0, Vec(1.0, 0, 0.2)));
 

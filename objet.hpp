@@ -16,14 +16,19 @@ public:
 	//même si elle ne désigne pas toujours le même point (centre du cercle, point d'intéret...)
 	Vec position;
 	Vec couleur;
+	Vec emission;
 	double reflectivite;
 	double transparence;
 
-	Objet() : position(Vec(0, 0, 0.0)), couleur(Vec(255.0, 0.0, 0.0)), reflectivite(0.5), transparence(0.5)
+	Objet() : position(Vec(0, 0, 0.0)), couleur(Vec(255.0, 0.0, 0.0)), reflectivite(0.5), transparence(0.5), emission(Vec(0,0,0))
 	{
 	}
 
-	Objet(Vec pos, Vec col, double reflec, double transp) : position(pos), couleur(col), reflectivite(reflec), transparence(transp)
+	Objet(Vec pos, Vec col, double reflec, double transp) : position(pos), couleur(col), reflectivite(reflec), transparence(transp), emission(Vec(0,0,0))
+	{
+	}
+
+	Objet(Vec pos, Vec col, double reflec, double transp, Vec em) : position(pos), couleur(col), reflectivite(reflec), transparence(transp), emission(em)
 	{
 	}
 
@@ -51,6 +56,10 @@ public:
 	}
 
 	Sphere(Vec pos, Vec col, double reflec, double transp, double rad) : Objet(pos, col, reflec, transp), radius(rad)
+	{
+	}
+
+	Sphere(Vec pos, Vec col, double reflec, double transp, Vec em, double rad) : Objet(pos, col, reflec, transp, em), radius(rad)
 	{
 	}
 
@@ -117,6 +126,13 @@ public:
 	}
 
 	Plan(Vec pos, Vec col, double reflec, double transp, Vec lo, Vec la) : Objet(pos, col, reflec, transp), longueur(lo), largeur(la)
+	{
+		normalVector = longueur.prod_vec(largeur);
+		normalVector.normalize();
+		//normalVector = -normalVector;
+	}
+
+		Plan(Vec pos, Vec col, double reflec, double transp, Vec em, Vec lo, Vec la) : Objet(pos, col, reflec, transp, em), longueur(lo), largeur(la)
 	{
 		normalVector = longueur.prod_vec(largeur);
 		normalVector.normalize();
@@ -193,6 +209,8 @@ public:
 	Parallelepipede(Vec h, Vec lo, Vec la) : Objet(), hauteur(h), longueur(lo), largeur(la) {}
 
 	Parallelepipede(Vec pos, Vec col, double reflec, double transp, Vec h, Vec lo, Vec la) : Objet(pos, col, reflec, transp), hauteur(h), longueur(lo), largeur(la) {}
+
+	Parallelepipede(Vec pos, Vec col, double reflec, double transp, Vec em, Vec h, Vec lo, Vec la) : Objet(pos, col, reflec, transp, em), hauteur(h), longueur(lo), largeur(la) {}
 
 	/*Renvoie s'il existe une intersection avec le parallelepipe et renvoie le parametre permettant de calculer le point d'intersection*/
 	virtual bool intersect(Ray rayon, double *t, Vec *normale)
