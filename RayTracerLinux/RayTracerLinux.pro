@@ -9,10 +9,12 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    ../XML/tinyxml2.cpp \
     main.cpp \
-    mainwindow.cpp
+    #mainwindow.cpp
 
 HEADERS += \
+    ../XML/tinyxml2.h \
     ../camera.hpp \
     ../image.hpp \
     ../moteur_rendu.hpp \
@@ -20,13 +22,15 @@ HEADERS += \
     ../ray.hpp \
     ../stb-master/stb_image_write.h \
     ../vecteur.hpp \
-    mainwindow.h
+    ../xmlread.hpp \
+    #mainwindow.h
 
 FORMS += \
     mainwindow.ui
 
-QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -lomp -I/usr/local/include
-QMAKE_LFLAGS += -v
+QMAKE_CXXFLAGS += -Wsign-compare -Wunused-parameter -O3 -fopenmp #-I/usr/lib/gcc/x86_64-linux-gnu/9/include
+QMAKE_LFLAGS += -fopenmp
+LIBS += -lgomp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -39,7 +39,7 @@ COMPRESS      = gzip -9f
 DISTNAME      = RayTracer1.0.0
 DISTDIR = /Users/alexandre/Documents/ENSTA/2A/IN204/STAMM-CAILLET_IN204_project/build-RayTracer-Desktop_Qt_6_0_2_clang_64bit-Debug/.tmp/RayTracer1.0.0
 LINK          = /Library/Developer/CommandLineTools/usr/bin/clang++
-LFLAGS        = -stdlib=libc++ -headerpad_max_install_names $(EXPORT_ARCH_ARGS) -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -mmacosx-version-min=10.14 -Wl,-rpath,@executable_path/../Frameworks -Wl,-rpath,/Users/alexandre/Qt/6.0.2/clang_64/lib
+LFLAGS        = -stdlib=libc++ -v -headerpad_max_install_names $(EXPORT_ARCH_ARGS) -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -mmacosx-version-min=10.14 -Wl,-rpath,@executable_path/../Frameworks -Wl,-rpath,/Users/alexandre/Qt/6.0.2/clang_64/lib
 LIBS          = $(SUBLIBS) -F/Users/alexandre/Qt/6.0.2/clang_64/lib -framework QtWidgets -framework QtGui -framework AppKit -framework ImageIO -framework Metal -framework QtCore -framework DiskArbitration -framework IOKit -framework AGL -framework OpenGL   
 AR            = /Library/Developer/CommandLineTools/usr/bin/ar cq
 RANLIB        = /Library/Developer/CommandLineTools/usr/bin/ranlib -s

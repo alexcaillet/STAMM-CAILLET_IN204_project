@@ -58,11 +58,11 @@ void baseAttributes(float *xp, float *yp, float *zp,
 }
 
 
-std::vector<Sphere> readSpheres()
+std::vector<Sphere> readSpheres(const char* filename)
 {
     XMLDocument doc;
     std::vector<Sphere> spheres; 
-    doc.LoadFile( "scene.xml" );
+    doc.LoadFile(filename);
     
     XMLElement *scene = doc.RootElement();
     double iradius;
@@ -99,11 +99,11 @@ std::vector<Sphere> readSpheres()
 
 
 
-std::vector<Plan> readPlans()
+std::vector<Plan> readPlans(const char* filename)
 {
     XMLDocument doc;
     std::vector<Plan> plans; 
-    doc.LoadFile( "scene.xml" );
+    doc.LoadFile(filename);
     
     XMLElement *scene = doc.RootElement();
 
@@ -146,11 +146,11 @@ std::vector<Plan> readPlans()
 
 
 
-std::vector<Parallelepipede> readParalls()
+std::vector<Parallelepipede> readParalls(const char* filename)
 {
     XMLDocument doc;
     std::vector<Parallelepipede> paralls; 
-    doc.LoadFile( "scene.xml" );
+    doc.LoadFile(filename);
     
     XMLElement *scene = doc.RootElement();
 
@@ -198,11 +198,11 @@ std::vector<Parallelepipede> readParalls()
 }
 
 
-std::vector<Disque> readDisques()
+std::vector<Disque> readDisques(const char* filename)
 {
     XMLDocument doc;
     std::vector<Disque> disques; 
-    doc.LoadFile( "scene.xml" );
+    doc.LoadFile( filename );
     
     XMLElement *scene = doc.RootElement();
     double iradius;
@@ -243,7 +243,7 @@ std::vector<Disque> readDisques()
     return disques;
 }
 
-
+/*
 std::vector<Cylindre> readCylindres()
 {
     XMLDocument doc;
@@ -279,21 +279,21 @@ std::vector<Cylindre> readCylindres()
                 if (normale)
                     xyz(&xn,&yn,&zn,normale);
 
-
+                
                 XMLElement *hauteur = cylindre->FirstChildElement( "hauteur");
                 float xh,yh,zh;
                 if (hauteur)
                     xyz(&xh,&yh,&zh,hauteur);
 
-                cylindre.push_back(Cylindre(Disque(Vec(xp,yp,zp), Vec(xc,yc,zc), re, tr, Vec(xe,ye,ze),
-                                         iradius, Vec(xn,yn,zn)),)); 
+                cylindres.push_back(Cylindre(Disque(Vec(xp,yp,zp), Vec(xc,yc,zc), re, tr, Vec(xe,ye,ze),
+                                         iradius, Vec(xn,yn,zn)),hauteur)); 
 
                 cylindre = cylindre->NextSiblingElement( "cylindre" );
             }
         }
     }
-    return disques;
-}
+    return cylindres;
+}*/
 
 /*
 Camera readCamera()
@@ -347,7 +347,7 @@ Camera readCamera()
 }*/
 
 
-
+/*
 int main(int argc, char const *argv[])
 {
 
@@ -357,3 +357,4 @@ int main(int argc, char const *argv[])
     std::vector<Parallelepipede> paralls = readParalls();
 	return 0;
 }
+*/

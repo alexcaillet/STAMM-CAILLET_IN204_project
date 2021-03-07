@@ -61,11 +61,11 @@ void baseAttributes(float *xp, float *yp, float *zp,
 }
 
 
-std::vector<Sphere> readSpheres()
+std::vector<Sphere> readSpheres(const char* filename)
 {
     XMLDocument doc;
     std::vector<Sphere> spheres; 
-    doc.LoadFile( "scene.xml" );
+    doc.LoadFile(filename);
     
     XMLElement *scene = doc.RootElement();
     double iradius;
@@ -102,11 +102,11 @@ std::vector<Sphere> readSpheres()
 
 
 
-std::vector<Plan> readPlans()
+std::vector<Plan> readPlans(const char* filename)
 {
     XMLDocument doc;
     std::vector<Plan> plans; 
-    doc.LoadFile( "scene.xml" );
+    doc.LoadFile(filename);
     
     XMLElement *scene = doc.RootElement();
 
@@ -149,11 +149,11 @@ std::vector<Plan> readPlans()
 
 
 
-std::vector<Parallelepipede> readParalls()
+std::vector<Parallelepipede> readParalls(const char* filename)
 {
     XMLDocument doc;
     std::vector<Parallelepipede> paralls; 
-    doc.LoadFile( "scene.xml" );
+    doc.LoadFile(filename);
     
     XMLElement *scene = doc.RootElement();
 
@@ -201,11 +201,11 @@ std::vector<Parallelepipede> readParalls()
 }
 
 
-std::vector<Disque> readDisques()
+std::vector<Disque> readDisques(const char* filename)
 {
     XMLDocument doc;
     std::vector<Disque> disques; 
-    doc.LoadFile( "scene.xml" );
+    doc.LoadFile(filename);
     
     XMLElement *scene = doc.RootElement();
     double iradius;
@@ -247,11 +247,11 @@ std::vector<Disque> readDisques()
 }
 
 
-std::vector<Cylindre> readCylindres()
+std::vector<Cylindre> readCylindres(const char* filename)
 {
     XMLDocument doc;
     std::vector<Cylindre> cylindres; 
-    doc.LoadFile( "scene.xml" );
+    doc.LoadFile(filename);
     
     XMLElement *scene = doc.RootElement();
     double iradius, ihauteur;
@@ -350,23 +350,23 @@ Camera readCamera()
 
 
 
-std :: vector <Objet> read()
+std :: vector <Objet> read(const char* filename)
 {   
     std :: vector <Objet> objets;
 
-	std::vector<Sphere> spheres = readSpheres();
+	std::vector<Sphere> spheres = readSpheres(filename);
     objets.insert(objets.end(), spheres.begin(), spheres.end());
 
-	std::vector<Plan> plans = readPlans(); 
+	std::vector<Plan> plans = readPlans(filename); 
     objets.insert(objets.end(), plans.begin(), plans.end());
 
-    std::vector<Parallelepipede> paralls = readParalls();
+    std::vector<Parallelepipede> paralls = readParalls(filename);
     objets.insert(objets.end(), paralls.begin(), paralls.end());
 
-    std::vector<Disque> disques = readDisques();
+    std::vector<Disque> disques = readDisques(filename);
     objets.insert(objets.end(), disques.begin(), disques.end());
 
-    std::vector<Cylindre> cylindres = readCylindres();
+    std::vector<Cylindre> cylindres = readCylindres(filename);
     objets.insert(objets.end(), cylindres.begin(), cylindres.end());
 
     return objets;
