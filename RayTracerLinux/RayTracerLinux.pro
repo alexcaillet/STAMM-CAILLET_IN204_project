@@ -10,8 +10,9 @@ CONFIG += c++11
 
 SOURCES += \
     ../XML/tinyxml2.cpp \
+    ../xmlread.cpp \
     main.cpp \
-    #mainwindow.cpp
+    mainwindow.cpp
 
 HEADERS += \
     ../XML/tinyxml2.h \
@@ -23,7 +24,7 @@ HEADERS += \
     ../stb-master/stb_image_write.h \
     ../vecteur.hpp \
     ../xmlread.hpp \
-    #mainwindow.h
+    mainwindow.h
 
 FORMS += \
     mainwindow.ui

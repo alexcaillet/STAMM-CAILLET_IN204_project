@@ -4,6 +4,7 @@
 #include "objet.hpp"
 #include "vector"
 #include "camera.hpp"
+#include "xmlread.hpp"
 
 //L'objet de ce fichier est de définir les fonctions de lecture de fichiers XML
 using namespace tinyxml2;
@@ -202,7 +203,7 @@ std::vector<Disque> readDisques(const char* filename)
 {
     XMLDocument doc;
     std::vector<Disque> disques; 
-    doc.LoadFile( filename );
+    doc.LoadFile(filename);
     
     XMLElement *scene = doc.RootElement();
     double iradius;
@@ -243,15 +244,15 @@ std::vector<Disque> readDisques(const char* filename)
     return disques;
 }
 
-/*
-std::vector<Cylindre> readCylindres()
+
+std::vector<Cylindre> readCylindres(const char* filename)
 {
     XMLDocument doc;
     std::vector<Cylindre> cylindres; 
-    doc.LoadFile( "scene.xml" );
+    doc.LoadFile(filename);
     
     XMLElement *scene = doc.RootElement();
-    double iradius;
+    double iradius, ihauteur;
     float xp,yp,zp;
     float xc,yc,zc;
     float xe,ye,ze;
@@ -279,21 +280,20 @@ std::vector<Cylindre> readCylindres()
                 if (normale)
                     xyz(&xn,&yn,&zn,normale);
 
-                
+
                 XMLElement *hauteur = cylindre->FirstChildElement( "hauteur");
-                float xh,yh,zh;
                 if (hauteur)
-                    xyz(&xh,&yh,&zh,hauteur);
+                    ihauteur=atof(hauteur->GetText());
 
                 cylindres.push_back(Cylindre(Disque(Vec(xp,yp,zp), Vec(xc,yc,zc), re, tr, Vec(xe,ye,ze),
-                                         iradius, Vec(xn,yn,zn)),hauteur)); 
+                                         iradius, Vec(xn,yn,zn)),ihauteur)); 
 
                 cylindre = cylindre->NextSiblingElement( "cylindre" );
             }
         }
     }
     return cylindres;
-}*/
+}
 
 /*
 Camera readCamera()
@@ -347,14 +347,26 @@ Camera readCamera()
 }*/
 
 
-/*
-int main(int argc, char const *argv[])
-{
 
-	std::vector<Sphere> spheres = readSpheres();
-    std :: cout << spheres[1].transparence<< std :: endl;
-	std::vector<Plan> plans = readPlans(); 
-    std::vector<Parallelepipede> paralls = readParalls();
-	return 0;
+std :: vector <Objet> read(const char* filename)
+{   
+    std :: vector <Objet> objets;
+
+	std::vector<Sphere> spheres = readSpheres(filename);
+    objets.insert(objets.end(), spheres.begin(), spheres.end());
+
+	std::vector<Plan> plans = readPlans(filename); 
+    objets.insert(objets.end(), plans.begin(), plans.end());
+
+    std::vector<Parallelepipede> paralls = readParalls(filename);
+    objets.insert(objets.end(), paralls.begin(), paralls.end());
+
+    std::vector<Disque> disques = readDisques(filename);
+    objets.insert(objets.end(), disques.begin(), disques.end());
+
+    std::vector<Cylindre> cylindres = readCylindres(filename);
+    objets.insert(objets.end(), cylindres.begin(), cylindres.end());
+
+    return objets;
+	
 }
-*/

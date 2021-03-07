@@ -17,7 +17,7 @@ CXX           = g++
 DEFINES       = -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O2 -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -Wsign-compare -Wunused-parameter -O3 -fopenmp -O2 -std=gnu++1z -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I../RayTracerLinux -I. -I/home/alexandre/Qt/6.0.2/gcc_64/include -I/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets -I/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui -I/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore -I. -I/home/alexandre/Qt/6.0.2/gcc_64/mkspecs/linux-g++
+INCPATH       = -I../RayTracerLinux -I. -I/home/alexandre/Qt/6.0.2/gcc_64/include -I/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets -I/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui -I/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore -I. -I. -I/home/alexandre/Qt/6.0.2/gcc_64/mkspecs/linux-g++
 QMAKE         = /home/alexandre/Qt/6.0.2/gcc_64/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -53,9 +53,14 @@ OBJECTS_DIR   = ./
 ####### Files
 
 SOURCES       = ../XML/tinyxml2.cpp \
-		../RayTracerLinux/main.cpp 
+		../xmlread.cpp \
+		../RayTracerLinux/main.cpp \
+		../RayTracerLinux/mainwindow.cpp moc_mainwindow.cpp
 OBJECTS       = tinyxml2.o \
-		main.o
+		xmlread.o \
+		main.o \
+		mainwindow.o \
+		moc_mainwindow.o
 DIST          = /home/alexandre/Qt/6.0.2/gcc_64/mkspecs/features/spec_pre.prf \
 		/home/alexandre/Qt/6.0.2/gcc_64/mkspecs/common/unix.conf \
 		/home/alexandre/Qt/6.0.2/gcc_64/mkspecs/common/linux.conf \
@@ -172,8 +177,11 @@ DIST          = /home/alexandre/Qt/6.0.2/gcc_64/mkspecs/features/spec_pre.prf \
 		../ray.hpp \
 		../stb-master/stb_image_write.h \
 		../vecteur.hpp \
-		../xmlread.hpp ../XML/tinyxml2.cpp \
-		../RayTracerLinux/main.cpp
+		../xmlread.hpp \
+		../RayTracerLinux/mainwindow.h ../XML/tinyxml2.cpp \
+		../xmlread.cpp \
+		../RayTracerLinux/main.cpp \
+		../RayTracerLinux/mainwindow.cpp
 QMAKE_TARGET  = RayTracerLinux
 DESTDIR       = 
 TARGET        = RayTracerLinux
@@ -182,7 +190,7 @@ TARGET        = RayTracerLinux
 first: all
 ####### Build rules
 
-RayTracerLinux:  $(OBJECTS)  
+RayTracerLinux: ui_mainwindow.h $(OBJECTS)  
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
 
 Makefile: ../RayTracerLinux/RayTracerLinux.pro /home/alexandre/Qt/6.0.2/gcc_64/mkspecs/linux-g++/qmake.conf /home/alexandre/Qt/6.0.2/gcc_64/mkspecs/features/spec_pre.prf \
@@ -425,8 +433,9 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /home/alexandre/Qt/6.0.2/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../XML/tinyxml2.h ../camera.hpp ../image.hpp ../moteur_rendu.hpp ../objet.hpp ../ray.hpp ../stb-master/stb_image_write.h ../vecteur.hpp ../xmlread.hpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../XML/tinyxml2.cpp ../RayTracerLinux/main.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../XML/tinyxml2.h ../camera.hpp ../image.hpp ../moteur_rendu.hpp ../objet.hpp ../ray.hpp ../stb-master/stb_image_write.h ../vecteur.hpp ../xmlread.hpp ../RayTracerLinux/mainwindow.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../XML/tinyxml2.cpp ../xmlread.cpp ../RayTracerLinux/main.cpp ../RayTracerLinux/mainwindow.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../RayTracerLinux/mainwindow.ui $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -458,16 +467,12 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /home/alexandre/Qt/6.0.2/gcc_64/mkspecs/features/data/dummy.cpp
 	g++ -pipe -Wsign-compare -Wunused-parameter -O3 -fopenmp -O2 -std=gnu++1z -Wall -Wextra -dM -E -o moc_predefs.h /home/alexandre/Qt/6.0.2/gcc_64/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all:
+compiler_moc_header_make_all: moc_mainwindow.cpp
 compiler_moc_header_clean:
-compiler_moc_objc_header_make_all:
-compiler_moc_objc_header_clean:
-compiler_moc_source_make_all: main.moc
-compiler_moc_source_clean:
-	-$(DEL_FILE) main.moc
-main.moc: ../RayTracerLinux/main.cpp \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/QApplication \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qapplication.h \
+	-$(DEL_FILE) moc_mainwindow.cpp
+moc_mainwindow.cpp: ../RayTracerLinux/mainwindow.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/QMainWindow \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qmainwindow.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qtguiglobal.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qglobal.h \
@@ -494,14 +499,19 @@ main.moc: ../RayTracerLinux/main.cpp \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qversiontagging.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qtgui-config.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qtwidgets-config.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qcoreapplication.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qwidget.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qwindowdefs.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qobjectdefs.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qnamespace.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qtmetamacros.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qobject.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstring.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qchar.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstringview.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qbytearray.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qrefcount.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qnamespace.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qtmetamacros.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qarraydata.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qpair.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qarraydatapointer.h \
@@ -515,9 +525,6 @@ main.moc: ../RayTracerLinux/main.cpp \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qutf8stringview.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstringtokenizer.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstringbuilder.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qobject.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qobjectdefs.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qobjectdefs_impl.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qlist.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qhashfunctions.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qiterator.h \
@@ -541,54 +548,45 @@ main.moc: ../RayTracerLinux/main.cpp \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qproperty.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qshareddata.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qpropertyprivate.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qeventloop.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qdebug.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qhash.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qmap.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qshareddata_impl.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qtextstream.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstringconverter.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qset.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qcontiguouscache.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qsharedpointer.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qwindowdefs.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qwindowdefs_win.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qpoint.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qsize.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qmargins.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qcursor.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qbitmap.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpixmap.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpaintdevice.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qrect.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qsize.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qpoint.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpalette.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qcolor.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qrgb.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qrgba64.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qbrush.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qimage.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpixelformat.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qtransform.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpolygon.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qregion.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qline.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qguiapplication.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qinputmethod.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qlocale.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qvariant.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/QMainWindow \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qmainwindow.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qwidget.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpalette.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qbrush.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpixmap.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qsharedpointer.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qsharedpointer_impl.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qfont.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qfontmetrics.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qfontinfo.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qcursor.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qbitmap.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qkeysequence.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qevent.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qiodevice.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qpointer.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qurl.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qvariant.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qmap.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qshareddata_impl.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qhash.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qdebug.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qtextstream.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstringconverter.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qset.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qcontiguouscache.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qeventpoint.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qvector2d.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qvectornd.h \
@@ -614,6 +612,7 @@ main.moc: ../RayTracerLinux/main.cpp \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qfileinfo.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qdatetime.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qcalendar.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qlocale.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qdialog.h \
 		../moteur_rendu.hpp \
 		../vecteur.hpp \
@@ -627,25 +626,43 @@ main.moc: ../RayTracerLinux/main.cpp \
 		../XML/tinyxml2.h \
 		moc_predefs.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/bin/moc
-	/home/alexandre/Qt/6.0.2/gcc_64/bin/moc $(DEFINES) --include /media/psf/Home/Documents/ENSTA/2A/IN204/STAMM-CAILLET_IN204_project/build-RayTracerLinux-Desktop_Qt_6_0_2_GCC_64bit-Release/moc_predefs.h -I/home/alexandre/Qt/6.0.2/gcc_64/mkspecs/linux-g++ -I/media/psf/Home/Documents/ENSTA/2A/IN204/STAMM-CAILLET_IN204_project/RayTracerLinux -I/home/alexandre/Qt/6.0.2/gcc_64/include -I/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets -I/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui -I/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore -I. -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../RayTracerLinux/main.cpp -o main.moc
+	/home/alexandre/Qt/6.0.2/gcc_64/bin/moc $(DEFINES) --include /media/psf/Home/Documents/ENSTA/2A/IN204/STAMM-CAILLET_IN204_project/build-RayTracerLinux-Desktop_Qt_6_0_2_GCC_64bit-Release/moc_predefs.h -I/home/alexandre/Qt/6.0.2/gcc_64/mkspecs/linux-g++ -I/media/psf/Home/Documents/ENSTA/2A/IN204/STAMM-CAILLET_IN204_project/RayTracerLinux -I/home/alexandre/Qt/6.0.2/gcc_64/include -I/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets -I/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui -I/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore -I. -I/usr/include/c++/9 -I/usr/include/x86_64-linux-gnu/c++/9 -I/usr/include/c++/9/backward -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../RayTracerLinux/mainwindow.h -o moc_mainwindow.cpp
 
-compiler_uic_make_all:
+compiler_moc_objc_header_make_all:
+compiler_moc_objc_header_clean:
+compiler_moc_source_make_all:
+compiler_moc_source_clean:
+compiler_uic_make_all: ui_mainwindow.h
 compiler_uic_clean:
+	-$(DEL_FILE) ui_mainwindow.h
+ui_mainwindow.h: ../RayTracerLinux/mainwindow.ui \
+		/home/alexandre/Qt/6.0.2/gcc_64/bin/uic
+	/home/alexandre/Qt/6.0.2/gcc_64/bin/uic ../RayTracerLinux/mainwindow.ui -o ui_mainwindow.h
+
 compiler_yacc_decl_make_all:
 compiler_yacc_decl_clean:
 compiler_yacc_impl_make_all:
 compiler_yacc_impl_clean:
 compiler_lex_make_all:
 compiler_lex_clean:
-compiler_clean: compiler_moc_predefs_clean compiler_moc_source_clean 
+compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_uic_clean 
 
 ####### Compile
 
 tinyxml2.o: ../XML/tinyxml2.cpp ../XML/tinyxml2.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o tinyxml2.o ../XML/tinyxml2.cpp
 
-main.o: ../RayTracerLinux/main.cpp /home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/QApplication \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qapplication.h \
+xmlread.o: ../xmlread.cpp ../vecteur.hpp \
+		../XML/tinyxml2.h \
+		../objet.hpp \
+		../ray.hpp \
+		../camera.hpp \
+		../xmlread.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o xmlread.o ../xmlread.cpp
+
+main.o: ../RayTracerLinux/main.cpp ../RayTracerLinux/mainwindow.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/QMainWindow \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qmainwindow.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qtguiglobal.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qglobal.h \
@@ -672,14 +689,19 @@ main.o: ../RayTracerLinux/main.cpp /home/alexandre/Qt/6.0.2/gcc_64/include/QtWid
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qversiontagging.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qtgui-config.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qtwidgets-config.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qcoreapplication.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qwidget.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qwindowdefs.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qobjectdefs.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qnamespace.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qtmetamacros.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qobject.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstring.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qchar.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstringview.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qbytearray.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qrefcount.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qnamespace.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qtmetamacros.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qarraydata.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qpair.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qarraydatapointer.h \
@@ -693,9 +715,6 @@ main.o: ../RayTracerLinux/main.cpp /home/alexandre/Qt/6.0.2/gcc_64/include/QtWid
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qutf8stringview.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstringtokenizer.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstringbuilder.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qobject.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qobjectdefs.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qobjectdefs_impl.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qlist.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qhashfunctions.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qiterator.h \
@@ -719,54 +738,45 @@ main.o: ../RayTracerLinux/main.cpp /home/alexandre/Qt/6.0.2/gcc_64/include/QtWid
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qproperty.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qshareddata.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qpropertyprivate.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qeventloop.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qdebug.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qhash.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qmap.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qshareddata_impl.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qtextstream.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstringconverter.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qset.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qcontiguouscache.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qsharedpointer.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qwindowdefs.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qwindowdefs_win.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qpoint.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qsize.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qmargins.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qcursor.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qbitmap.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpixmap.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpaintdevice.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qrect.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qsize.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qpoint.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpalette.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qcolor.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qrgb.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qrgba64.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qbrush.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qimage.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpixelformat.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qtransform.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpolygon.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qregion.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qline.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qguiapplication.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qinputmethod.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qlocale.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qvariant.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/QMainWindow \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qmainwindow.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qwidget.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpalette.h \
-		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qbrush.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpixmap.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qsharedpointer.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qsharedpointer_impl.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qfont.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qfontmetrics.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qfontinfo.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qcursor.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qbitmap.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qkeysequence.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qevent.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qiodevice.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qpointer.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qurl.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qvariant.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qmap.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qshareddata_impl.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qhash.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qdebug.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qtextstream.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstringconverter.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qset.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qcontiguouscache.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qeventpoint.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qvector2d.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qvectornd.h \
@@ -792,6 +802,169 @@ main.o: ../RayTracerLinux/main.cpp /home/alexandre/Qt/6.0.2/gcc_64/include/QtWid
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qfileinfo.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qdatetime.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qcalendar.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qlocale.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qdialog.h \
+		../moteur_rendu.hpp \
+		../vecteur.hpp \
+		../image.hpp \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/QString \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/QImage \
+		../objet.hpp \
+		../ray.hpp \
+		../camera.hpp \
+		../xmlread.hpp \
+		../XML/tinyxml2.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/QApplication \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qapplication.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qcoreapplication.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qeventloop.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qguiapplication.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qinputmethod.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../RayTracerLinux/main.cpp
+
+mainwindow.o: ../RayTracerLinux/mainwindow.cpp ../RayTracerLinux/mainwindow.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/QMainWindow \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qmainwindow.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qtguiglobal.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qglobal.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qconfig.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qtcore-config.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qsystemdetection.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qprocessordetection.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qcompilerdetection.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qtypeinfo.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qcontainerfwd.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qsysinfo.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qlogging.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qflags.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qatomic.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qbasicatomic.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qgenericatomic.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qatomic_msvc.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qglobalstatic.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qmutex.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qnumeric.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qversiontagging.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qtgui-config.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qtwidgets-config.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qwidget.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qwindowdefs.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qobjectdefs.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qnamespace.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qtmetamacros.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qobject.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstring.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qchar.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstringview.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qbytearray.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qrefcount.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qarraydata.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qpair.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qarraydatapointer.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qarraydataops.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qcontainertools_impl.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qbytearrayalgorithms.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qbytearrayview.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstringliteral.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstringalgorithms.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qanystringview.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qutf8stringview.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstringtokenizer.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstringbuilder.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qlist.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qhashfunctions.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qiterator.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qbytearraylist.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstringlist.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qalgorithms.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstringmatcher.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qcoreevent.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qscopedpointer.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qmetatype.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qcompare.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qvarlengtharray.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qdatastream.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qiodevicebase.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qiterable.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qmetacontainer.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qcontainerinfo.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qtaggedpointer.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qmath.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qobject_impl.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qproperty.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qshareddata.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qpropertyprivate.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qmargins.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpaintdevice.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qrect.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qsize.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qpoint.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpalette.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qcolor.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qrgb.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qrgba64.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qbrush.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qimage.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpixelformat.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qtransform.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpolygon.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qregion.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qline.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpixmap.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qsharedpointer.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qfont.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qfontmetrics.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qfontinfo.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qcursor.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qbitmap.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qkeysequence.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qevent.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qiodevice.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qpointer.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qurl.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qvariant.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qmap.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qshareddata_impl.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qhash.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qdebug.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qtextstream.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qstringconverter.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qset.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qcontiguouscache.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qeventpoint.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qvector2d.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qvectornd.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qpointingdevice.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qinputdevice.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qscreen.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/QList \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/QObject \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/QRect \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/QSize \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/QSizeF \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/QTransform \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qtabwidget.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtGui/qicon.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/QPushButton \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qpushbutton.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/QFileDialog \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qfiledialog.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qdir.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qfile.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qfiledevice.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qfileinfo.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qdatetime.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qcalendar.h \
+		/home/alexandre/Qt/6.0.2/gcc_64/include/QtCore/qlocale.h \
 		/home/alexandre/Qt/6.0.2/gcc_64/include/QtWidgets/qdialog.h \
 		../moteur_rendu.hpp \
 		../vecteur.hpp \
@@ -803,7 +976,10 @@ main.o: ../RayTracerLinux/main.cpp /home/alexandre/Qt/6.0.2/gcc_64/include/QtWid
 		../camera.hpp \
 		../xmlread.hpp \
 		../XML/tinyxml2.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../RayTracerLinux/main.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../RayTracerLinux/mainwindow.cpp
+
+moc_mainwindow.o: moc_mainwindow.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
 
 ####### Install
 
