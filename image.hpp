@@ -12,6 +12,7 @@
 
 class Picture
 {
+
  public:
     const int w; //largeur
     const int h; //hauteur
@@ -40,7 +41,7 @@ class Picture
             savePicturePNG(filename);
             break;
         default:
-            std::cerr << "Erreur : le format demandé est incorrect. Choisissez ppm(0), jpeg(1) ou png(2) \n";
+            std::cout << "Erreur : le format demandé est incorrect. Choisissez ppm(0), jpeg(1) ou png(2) \n";
             break;
         }
     }

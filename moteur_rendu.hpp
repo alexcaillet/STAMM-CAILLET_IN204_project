@@ -7,7 +7,8 @@
 #include <cmath>
 #include <memory>
 #include <random>
-#include <omp.h>
+//#include <omp.h>
+#include "/usr/local/Cellar/gcc/10.2.0/lib/gcc/10/gcc/x86_64-apple-darwin19/10.2.0/include/omp.h"
 #include <chrono>
 
 #include "vecteur.hpp"
@@ -138,7 +139,7 @@ public:
         return pixel_color; //*abs(normale.dot(rayon.direction));
     }
 
-    void rendu(std::vector<Objet *> objets, int image_width, int image_height, int fov, const std::string &filename)
+    void rendu(std::vector<Objet *> objets, int image_width, int image_height, int fov, const char* filename)
     {
         Picture scene(image_width, image_height);
 
@@ -183,7 +184,7 @@ public:
         std::cout << std::endl
                   << "Temps de calcul : " << temps_calcul.count() << "s\n";
 
-        scene.savePicture("test_savePicture.png", 2);
+        scene.savePicture(filename, 2);
     }
 
     void calcul()
@@ -225,7 +226,7 @@ public:
         //objets.push_back( new Cylindre(Disque(Vec(0, 0, -25), bleu, 0.7, 0.5, Vec(3.0, 0.0, 0.0), Vec(0.0, -1.0, 0.0)), 3.0));
 
         int fov = 90;
-        rendu(objets, image_width, image_height, fov, "premier_test.ppm");
+        rendu(objets, image_width, image_height, fov, "premier_test.png");
         for (unsigned int i = 0; i < objets.size(); i++)
         {
             delete objets[i];

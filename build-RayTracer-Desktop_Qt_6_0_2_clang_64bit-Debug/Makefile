@@ -16,8 +16,8 @@ CC            = /Library/Developer/CommandLineTools/usr/bin/clang
 CXX           = /Library/Developer/CommandLineTools/usr/bin/clang++
 DEFINES       = -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g $(EXPORT_ARCH_ARGS) -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -mmacosx-version-min=10.14 -Wall -Wextra -fPIC $(DEFINES)
-CXXFLAGS      = -pipe -stdlib=libc++ -g -std=gnu++1z $(EXPORT_ARCH_ARGS) -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -mmacosx-version-min=10.14 -Wall -Wextra -fPIC $(DEFINES)
-INCPATH       = -I../RayTracer -I. -I/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers -I/Users/alexandre/Qt/6.0.2/clang_64/lib/QtGui.framework/Headers -I/Users/alexandre/Qt/6.0.2/clang_64/lib/QtCore.framework/Headers -I. -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AGL.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AGL.framework/Headers -I/Users/alexandre/Qt/6.0.2/clang_64/mkspecs/macx-clang -F/Users/alexandre/Qt/6.0.2/clang_64/lib
+CXXFLAGS      = -pipe -stdlib=libc++ -Xpreprocessor -fopenmp -lomp -I/usr/local/include -g -std=gnu++1z $(EXPORT_ARCH_ARGS) -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -mmacosx-version-min=10.14 -Wall -Wextra -fPIC $(DEFINES)
+INCPATH       = -I../RayTracer -I. -I/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers -I/Users/alexandre/Qt/6.0.2/clang_64/lib/QtGui.framework/Headers -I/Users/alexandre/Qt/6.0.2/clang_64/lib/QtCore.framework/Headers -I. -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AGL.framework/Headers -I. -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/AGL.framework/Headers -I/Users/alexandre/Qt/6.0.2/clang_64/mkspecs/macx-clang -F/Users/alexandre/Qt/6.0.2/clang_64/lib
 QMAKE         = /Users/alexandre/Qt/6.0.2/clang_64/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -52,13 +52,9 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../image.cpp \
-		../moteur_rendu.cpp \
-		../RayTracer/main.cpp \
+SOURCES       = ../RayTracer/main.cpp \
 		../RayTracer/mainwindow.cpp moc_mainwindow.cpp
-OBJECTS       = image.o \
-		moteur_rendu.o \
-		main.o \
+OBJECTS       = main.o \
 		mainwindow.o \
 		moc_mainwindow.o
 DIST          = /Users/alexandre/Qt/6.0.2/clang_64/mkspecs/features/spec_pre.prf \
@@ -178,10 +174,9 @@ DIST          = /Users/alexandre/Qt/6.0.2/clang_64/mkspecs/features/spec_pre.prf
 		../moteur_rendu.hpp \
 		../objet.hpp \
 		../ray.hpp \
+		../stb-master/stb_image_write.h \
 		../vecteur.hpp \
-		../RayTracer/mainwindow.h ../image.cpp \
-		../moteur_rendu.cpp \
-		../RayTracer/main.cpp \
+		../RayTracer/mainwindow.h ../RayTracer/main.cpp \
 		../RayTracer/mainwindow.cpp
 QMAKE_TARGET  = RayTracer
 DESTDIR       = 
@@ -201,7 +196,7 @@ include /Users/alexandre/Qt/6.0.2/clang_64/mkspecs/features/mac/sdk.mk
 first: all
 ####### Build rules
 
-RayTracer.app/Contents/MacOS/RayTracer:  $(OBJECTS)  
+RayTracer.app/Contents/MacOS/RayTracer: ui_mainwindow.h $(OBJECTS)  
 	@test -d RayTracer.app/Contents/MacOS/ || mkdir -p RayTracer.app/Contents/MacOS/
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
 
@@ -468,8 +463,9 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /Users/alexandre/Qt/6.0.2/clang_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../camera.hpp ../image.hpp ../moteur_rendu.hpp ../objet.hpp ../ray.hpp ../vecteur.hpp ../RayTracer/mainwindow.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../image.cpp ../moteur_rendu.cpp ../RayTracer/main.cpp ../RayTracer/mainwindow.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../camera.hpp ../image.hpp ../moteur_rendu.hpp ../objet.hpp ../ray.hpp ../stb-master/stb_image_write.h ../vecteur.hpp ../RayTracer/mainwindow.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../RayTracer/main.cpp ../RayTracer/mainwindow.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../RayTracer/mainwindow.ui $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -502,7 +498,7 @@ compiler_moc_predefs_make_all: moc_predefs.h
 compiler_moc_predefs_clean:
 	-$(DEL_FILE) moc_predefs.h
 moc_predefs.h: /Users/alexandre/Qt/6.0.2/clang_64/mkspecs/features/data/dummy.cpp
-	/Library/Developer/CommandLineTools/usr/bin/clang++ -pipe -stdlib=libc++ -g -std=gnu++1z $(EXPORT_ARCH_ARGS) -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -mmacosx-version-min=10.14 -Wall -Wextra -dM -E -o moc_predefs.h /Users/alexandre/Qt/6.0.2/clang_64/mkspecs/features/data/dummy.cpp
+	/Library/Developer/CommandLineTools/usr/bin/clang++ -pipe -stdlib=libc++ -Xpreprocessor -fopenmp -lomp -I/usr/local/include -g -std=gnu++1z $(EXPORT_ARCH_ARGS) -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -mmacosx-version-min=10.14 -Wall -Wextra -dM -E -o moc_predefs.h /Users/alexandre/Qt/6.0.2/clang_64/mkspecs/features/data/dummy.cpp
 
 compiler_moc_header_make_all: moc_mainwindow.cpp
 compiler_moc_header_clean:
@@ -512,6 +508,16 @@ moc_mainwindow.cpp: ../RayTracer/mainwindow.h \
 		/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers/qmainwindow.h \
 		/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers/QPushButton \
 		/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers/qpushbutton.h \
+		/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers/QFileDialog \
+		/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers/qfiledialog.h \
+		../moteur_rendu.hpp \
+		/usr/local/Cellar/gcc/10.2.0/lib/gcc/10/gcc/x86_64-apple-darwin19/10.2.0/include/omp.h \
+		../vecteur.hpp \
+		../image.hpp \
+		../stb-master/stb_image_write.h \
+		../objet.hpp \
+		../ray.hpp \
+		../camera.hpp \
 		moc_predefs.h \
 		/Users/alexandre/Qt/6.0.2/clang_64/bin/moc
 	/Users/alexandre/Qt/6.0.2/clang_64/bin/moc $(DEFINES) --include /Users/alexandre/Documents/ENSTA/2A/IN204/STAMM-CAILLET_IN204_project/build-RayTracer-Desktop_Qt_6_0_2_clang_64bit-Debug/moc_predefs.h -I/Users/alexandre/Qt/6.0.2/clang_64/mkspecs/macx-clang -I/Users/alexandre/Documents/ENSTA/2A/IN204/STAMM-CAILLET_IN204_project/RayTracer -I/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers -I/Users/alexandre/Qt/6.0.2/clang_64/lib/QtGui.framework/Headers -I/Users/alexandre/Qt/6.0.2/clang_64/lib/QtCore.framework/Headers -I. -I/Library/Developer/CommandLineTools/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/12.0.0/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/Users/alexandre/Qt/6.0.2/clang_64/lib ../RayTracer/mainwindow.h -o moc_mainwindow.cpp
@@ -520,8 +526,13 @@ compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
-compiler_uic_make_all:
+compiler_uic_make_all: ui_mainwindow.h
 compiler_uic_clean:
+	-$(DEL_FILE) ui_mainwindow.h
+ui_mainwindow.h: ../RayTracer/mainwindow.ui \
+		/Users/alexandre/Qt/6.0.2/clang_64/bin/uic
+	/Users/alexandre/Qt/6.0.2/clang_64/bin/uic ../RayTracer/mainwindow.ui -o ui_mainwindow.h
+
 compiler_rez_source_make_all:
 compiler_rez_source_clean:
 compiler_yacc_decl_make_all:
@@ -530,26 +541,25 @@ compiler_yacc_impl_make_all:
 compiler_yacc_impl_clean:
 compiler_lex_make_all:
 compiler_lex_clean:
-compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean 
+compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_uic_clean 
 
 ####### Compile
-
-image.o: ../image.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o image.o ../image.cpp
-
-moteur_rendu.o: ../moteur_rendu.cpp ../vecteur.hpp \
-		../image.hpp \
-		../stb-master/stb_image_write.h \
-		../objet.hpp \
-		../ray.hpp \
-		../camera.hpp
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moteur_rendu.o ../moteur_rendu.cpp
 
 main.o: ../RayTracer/main.cpp ../RayTracer/mainwindow.h \
 		/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers/QMainWindow \
 		/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers/qmainwindow.h \
 		/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers/QPushButton \
 		/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers/qpushbutton.h \
+		/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers/QFileDialog \
+		/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers/qfiledialog.h \
+		../moteur_rendu.hpp \
+		/usr/local/Cellar/gcc/10.2.0/lib/gcc/10/gcc/x86_64-apple-darwin19/10.2.0/include/omp.h \
+		../vecteur.hpp \
+		../image.hpp \
+		../stb-master/stb_image_write.h \
+		../objet.hpp \
+		../ray.hpp \
+		../camera.hpp \
 		/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers/QApplication \
 		/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers/qapplication.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../RayTracer/main.cpp
@@ -560,7 +570,15 @@ mainwindow.o: ../RayTracer/mainwindow.cpp ../RayTracer/mainwindow.h \
 		/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers/QPushButton \
 		/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers/qpushbutton.h \
 		/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers/QFileDialog \
-		/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers/qfiledialog.h
+		/Users/alexandre/Qt/6.0.2/clang_64/lib/QtWidgets.framework/Headers/qfiledialog.h \
+		../moteur_rendu.hpp \
+		/usr/local/Cellar/gcc/10.2.0/lib/gcc/10/gcc/x86_64-apple-darwin19/10.2.0/include/omp.h \
+		../vecteur.hpp \
+		../image.hpp \
+		../stb-master/stb_image_write.h \
+		../objet.hpp \
+		../ray.hpp \
+		../camera.hpp
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../RayTracer/mainwindow.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 

@@ -40,7 +40,7 @@ public:
 class Sphere : public virtual Objet
 {
 public:
-	double radius; //rayon du cercle
+	double radius; //rayon de la sphère
 
 	Sphere() : Objet(), radius(1)
 	{
