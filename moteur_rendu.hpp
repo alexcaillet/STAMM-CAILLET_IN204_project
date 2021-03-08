@@ -99,10 +99,6 @@ public:
         if (closest_object->transparence > 0 && depth < max_depth)
         {
 
-            float epsilon = 1e-4;
-            //On gère l'effet fresnel
-            float facingratio = rayon.direction.dot(normale);
-            static float fresneleffect = mix(pow(1 - facingratio, 3), 1, 0.1);
             bool inside = false;
 
             normale = -normale;
@@ -183,7 +179,7 @@ public:
         for (j = 0; j < image_height; j++)
         {
             std::cerr << "\rLignes restantes: " << image_height - 1 - j << ' ' << std::flush;
-            #pragma omp parallel for schedule(dynamic, 100) private(i, s) num_threads(omp_get_max_threads())
+            #pragma omp parallel for schedule(dynamic, 100) private(i, s) num_threads(6)
             for (i = 0; i < image_width; i++)
             {
                 Vec pixel_color = Vec();

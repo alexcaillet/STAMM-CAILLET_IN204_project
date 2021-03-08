@@ -4,7 +4,6 @@
 		<height>1080</height>
 	</dimension>
 
-
 	<camera>
 		 <position x="5" y="0" z="15" />
 		 <axe x="-0.1" y="0" z="-1" />
@@ -91,11 +90,10 @@
 			<re>0.5</re>
 			<tr>0.5</tr>
 			<hauteur>3.0</hauteur>
-		</cylindre>
-
-		
+		</cylindre>	
 	</objets>
 
 </scene>
+
 
 
