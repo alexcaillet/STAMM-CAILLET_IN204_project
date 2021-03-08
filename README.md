@@ -19,7 +19,8 @@ Il suffit d'utiliser, après compilation :
 *nomdelascene.xml* est le nom du fichier de description de scène que l'on souhaite utiliser.
 Par exemple, *beautiful_scene.xml* et *scene.xml* sont deux fichiers de description à disposition dans le resposit.
 
-### Remarques 
+
+### Remarques et informations utiles
 - Cette version du projet est à jour avec la branche principale du reposit
 - Les fichiers *beautiful_scene.xml* et *scene.xml* décrivent d'ores et déjà des scènes prêtes à la compilation
 - La création d'une image peut prendre du temps, en fonction des dimensions demandées. Un affichage interactif dans le terminal vous tiendra avancé de l'avancement du calcul.
