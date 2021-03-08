@@ -1,4 +1,4 @@
-# STAMM-CAILLET_IN204_project
+# Projet Raytracing - Without-GUI
 
 ***Cette branche contient une version du projet adaptée à une compilation sans affichage graphique léger avec QT Creator***
 
