@@ -3,7 +3,7 @@
 
 ***Ce projet contient deux branches principales :***
 - La branche ***main*** est adaptée à la compilation du projet avec un affichage graphique léger à l'aide de QT Creator
-- La branche ***Without-GUI** est adaptée à la compilation du projet en ligne de commande dans un terminal
+- La branche **Without-GUI** est adaptée à la compilation du projet en ligne de commande dans un terminal
 
 **Il est nécessaire de compiler depuis QT Creator pour avoir l'affichage graphique**
 Merci de vous réferer à la branche ***Without-GUI*** dont le **README** vous guidera pour les commandes à effectuer dans un terminal sinon.
